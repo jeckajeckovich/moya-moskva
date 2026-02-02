@@ -2,10 +2,12 @@ const mapObject = document.getElementById("metro-map");
 const info = document.getElementById("station-info");
 
 mapObject.addEventListener("load", () => {
-  const svgDoc = mapObject.contentDocument;
-  const stations = svgDoc.querySelectorAll("circle");
+  const svg = mapObject.contentDocument;
 
-  // загрузка сохранённых данных
+  // ВАЖНО: временно ловим ВСЕ circle
+  const stations = svg.querySelectorAll("circle");
+
+  // загружаем сохранённые данные
   const saved = JSON.parse(localStorage.getItem("stations") || "{}");
 
   stations.forEach((station, index) => {
@@ -13,12 +15,23 @@ mapObject.addEventListener("load", () => {
     station.setAttribute("data-id", id);
     station.style.cursor = "pointer";
 
-    // если уже сохранено
+    // если станция уже сохранена
     if (saved[id]) {
       station.setAttribute("data-name", saved[id]);
       station.style.fill = "#000";
     }
 
+    // hover — визуальный тест
+    station.addEventListener("mouseenter", () => {
+      station.style.stroke = "#000";
+      station.style.strokeWidth = "2";
+    });
+
+    station.addEventListener("mouseleave", () => {
+      station.style.strokeWidth = "0";
+    });
+
+    // click
     station.addEventListener("click", () => {
       const current = station.getAttribute("data-name") || "";
       const name = prompt("Название станции:", current);
