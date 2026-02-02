@@ -23,15 +23,19 @@ h1 {
   box-sizing: border-box;
 }
 
-/* Правая часть с картой */
+/* Правая часть */
 #map-container {
   flex: 1;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start; /* сдвиг влево */
   align-items: center;
+  padding-left: 24px;
 }
 
+/* SVG */
 #metro-map {
+  width: 85%;
+  height: 95%;
   pointer-events: auto;
 }
 
@@ -42,4 +46,3 @@ h1 {
 #metro-map svg * {
   pointer-events: all;
 }
-
