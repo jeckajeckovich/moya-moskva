@@ -9,11 +9,19 @@
 
 <h1>Моя Москва</h1>
 
-<div id="map-container">
-<object id="metro-map" type="image/svg+xml" data="moya_moskva_base_map.svg"></object>
+<div id="app">
+  <aside id="sidebar">
+    <h2>Станция</h2>
+    <p>Кликни на станцию на карте</p>
+    <div id="station-info"></div>
+  </aside>
 
+  <main id="map-container">
+    <object id="metro-map" type="image/svg+xml" data="moya_moskva_base_map.svg"></object>
+  </main>
 </div>
 
 <script src="app.js"></script>
 </body>
+
 </html>
