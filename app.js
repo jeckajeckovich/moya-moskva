@@ -6,20 +6,25 @@ mapObject.addEventListener("load", () => {
   // временно: считаем станциями все circle
   const stations = svgDoc.querySelectorAll("circle");
 
-  stations.forEach((station, index) => {
-    station.style.cursor = "pointer";
+  stations.forEach((station, index) => {const info = document.getElementById("station-info");
 
-    station.addEventListener("click", () => {
-      const name = prompt(
-        "Название станции:",
-        station.getAttribute("data-name") || `Моё место #${index + 1}`
-      );
+station.addEventListener("click", () => {
+  const current = station.getAttribute("data-name") || "";
 
-      if (name) {
-        station.setAttribute("data-name", name);
-        station.style.fill = "#000"; // чтобы видеть клик
-        console.log("Станция:", name);
-      }
-    });
+  const name = prompt("Название станции:", current);
+  if (!name) return;
+
+  station.setAttribute("data-name", name);
+  station.style.fill = "#000";
+
+  saved[id] = name;
+  localStorage.setItem("stations", JSON.stringify(saved));
+
+  info.innerHTML = `
+    <strong>${name}</strong>
+    <p>Станция сохранена</p>
+  `;
+});
+
   });
 });
