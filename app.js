@@ -4,48 +4,49 @@ const info = document.getElementById("station-info");
 mapObject.addEventListener("load", () => {
   const svg = mapObject.contentDocument;
 
-  // ВАЖНО: временно ловим ВСЕ circle
-  const stations = svg.querySelectorAll("circle");
+  // СТАНЦИИ = ТЕКСТОВЫЕ ПОДПИСИ
+  const stations = svg.querySelectorAll("text");
 
-  // загружаем сохранённые данные
   const saved = JSON.parse(localStorage.getItem("stations") || "{}");
 
   stations.forEach((station, index) => {
-    const id = station.getAttribute("id") || `station-${index}`;
+    const originalName = station.textContent.trim();
+    if (!originalName) return;
+
+    const id = `station-${index}`;
     station.setAttribute("data-id", id);
     station.style.cursor = "pointer";
 
-    // если станция уже сохранена
+    // если переименовано
     if (saved[id]) {
-      station.setAttribute("data-name", saved[id]);
-      station.style.fill = "#000";
+      station.textContent = saved[id];
+      station.style.fontWeight = "bold";
     }
 
-    // hover — визуальный тест
+    // hover — ТЕСТ
     station.addEventListener("mouseenter", () => {
-      station.style.stroke = "#000";
-      station.style.strokeWidth = "2";
+      station.style.fill = "#000";
     });
 
     station.addEventListener("mouseleave", () => {
-      station.style.strokeWidth = "0";
+      station.style.fill = "";
     });
 
     // click
     station.addEventListener("click", () => {
-      const current = station.getAttribute("data-name") || "";
+      const current = station.textContent;
       const name = prompt("Название станции:", current);
       if (!name) return;
 
-      station.setAttribute("data-name", name);
-      station.style.fill = "#000";
+      station.textContent = name;
+      station.style.fontWeight = "bold";
 
       saved[id] = name;
       localStorage.setItem("stations", JSON.stringify(saved));
 
       info.innerHTML = `
         <strong>${name}</strong>
-        <p>Станция сохранена</p>
+        <p>Ранее: ${originalName}</p>
       `;
     });
   });
