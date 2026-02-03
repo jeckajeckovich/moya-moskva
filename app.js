@@ -208,3 +208,23 @@ window.addEventListener("mousemove", (e) => {
 window.addEventListener("mouseup", () => {
   isPanning = false;
 });
+// ===== VISUAL STATE OF STATIONS =====
+function updateStationsVisual() {
+  const stations = document.querySelectorAll(".station");
+
+  stations.forEach(station => {
+    const name =
+      station.getAttribute("data-name") ||
+      station.getAttribute("aria-label") ||
+      station.id;
+
+    if (!name) return;
+
+    const hasData =
+      window.storageData?.[name]?.note ||
+      window.storageData?.[name]?.photo;
+
+    station.classList.toggle("filled", !!hasData);
+    station.classList.toggle("empty", !hasData);
+  });
+}
