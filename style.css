@@ -1,10 +1,74 @@
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f5f5f5;
+}
+
+/* ===== TOP BAR ===== */
+#topbar {
+  padding: 12px 16px;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+#topbar h1 {
+  margin: 0 0 6px 0;
+  font-size: 24px;
+}
+
+#map-name-input {
+  width: 100%;
+  max-width: 420px;
+  padding: 6px 8px;
+  font-size: 14px;
+}
+
+/* ===== LAYOUT ===== */
+#app {
+  display: flex;
+  height: calc(100vh - 96px);
+}
+
+/* ===== SIDEBAR ===== */
+#sidebar {
+  width: 320px;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+#sidebar h2 {
+  margin-top: 0;
+}
+
+#station-info {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+#note {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+}
+
+#sidebar button {
+  margin-right: 4px;
+  margin-top: 4px;
+}
+
+.privacy {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #555;
+}
+
+/* ===== MAP ===== */
 #map-container {
   flex: 1;
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
   overflow: auto;
-  padding: 24px 24px 24px 0;
+  background: #f8fff8;
 }
 
 #map-viewport {
@@ -21,9 +85,9 @@
   height: auto;
   max-width: none;
   max-height: none;
-  overflow: visible;
 }
-/* ===== СТАНЦИИ ===== */
+
+/* ===== STATIONS ===== */
 .station-empty {
   opacity: 0.35;
   font-weight: 400;
