@@ -6,40 +6,53 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <header id="topbar">
+    <h1 id="map-title">Следующая станция</h1>
+    <input
+      id="map-name-input"
+      type="text"
+      placeholder="Название вашей карты (например: Моя Москва 2016–2024)"
+    />
+  </header>
 
-<h1>Моя Москва</h1>
+  <div id="app">
+    <!-- ЛЕВАЯ ПАНЕЛЬ -->
+    <aside id="sidebar">
+      <h2>Станция</h2>
+      <div id="station-info">Кликните на станцию</div>
 
-<div id="app">
-  <aside id="sidebar">
-    <h2>Станция</h2>
-    <div id="station-info">
-      Кликни на станцию
-    </div>
+      <textarea
+        id="note"
+        placeholder="Заметка…"
+        rows="4"
+      ></textarea>
 
-    <hr>
+      <input type="file" id="photo" />
 
-    <textarea id="note" placeholder="Заметка..."></textarea>
-    <input type="file" id="photo" accept="image/*" />
+      <button id="save">Сохранить</button>
+      <button id="reset">Сбросить всё</button>
 
-    <button id="save">Сохранить</button>
-    <button id="reset">Сбросить всё</button>
+      <p class="privacy">
+        🔐 Фото и заметки хранятся только в вашем браузере.<br />
+        Мы не можем их просматривать.
+      </p>
+    </aside>
 
-    <p class="hint">
-      🔒 Фото и заметки шифруются в браузере.<br>
-      Мы не можем их просматривать.
-    </p>
-  </aside>
-
-  <div id="map-container">
-    <div id="map-viewport">
-      <object id="metro-map" data="moya_moskva_base_map.svg" type="image/svg+xml"></object>
-    </div>
+    <!-- КАРТА -->
+    <main id="map-container">
+      <div id="map-viewport">
+        <object
+          id="metro-map"
+          type="image/svg+xml"
+          data="moya_moskva_base_map.svg">
+        </object>
+      </div>
+    </main>
   </div>
-</div>
 
-<script src="crypto.js"></script>
-<script src="storage.js"></script>
-<script src="app.js"></script>
-
+  <script src="crypto.js"></script>
+  <script src="storage.js"></script>
+  <script src="app.js"></script>
 </body>
+
 </html>
