@@ -11,6 +11,7 @@ body {
   border-bottom: 1px solid #ddd;
   text-align: center;
 }
+
 .topbar-inner {
   max-width: 720px;
   margin: 0 auto;
@@ -35,7 +36,6 @@ body {
   padding: 8px 10px;
   font-size: 14px;
 }
-
 
 /* ===== LAYOUT ===== */
 #app {
@@ -101,46 +101,15 @@ body {
   max-height: none;
 }
 
-/* ===== STATIONS ===== */
+/* ===== STATIONS (ЕДИНСТВЕННЫЕ НУЖНЫЕ) ===== */
 .station-empty {
   opacity: 0.35;
   font-weight: 400;
+  fill: #777;
 }
 
 .station-filled {
   opacity: 1;
   font-weight: 700;
   fill: #000;
-}
-/* === SVG INTERACTION FIX === */
-
-/* ВАЖНО: разрешаем клики вообще */
-svg, svg * {
-  pointer-events: auto;
-}
-
-/* СТАНЦИИ */
-.station,
-circle.station,
-g.station circle {
-  cursor: pointer;
-  pointer-events: all;
-  transition: r 0.15s ease, stroke-width 0.15s ease, opacity 0.15s ease;
-}
-
-/* Наведение */
-.station:hover {
-  stroke-width: 3 !important;
-  opacity: 1 !important;
-}
-
-/* Станции БЕЗ воспоминаний — бледнее */
-.station.empty {
-  opacity: 0.35;
-}
-
-/* Станции С воспоминаниями */
-.station.filled {
-  opacity: 1;
-  stroke-width: 2.5;
 }
