@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Моя Москва</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
@@ -12,58 +12,34 @@
 <div id="app">
   <aside id="sidebar">
     <h2>Станция</h2>
-
-    <div id="empty-state">
-      Кликни на станцию на карте
-    </div>
-
-    <div id="editor" hidden>
-      <label>
-        Название
-        <input id="station-name" type="text">
-      </label>
-
-      <label>
-        Заметка
-        <textarea id="station-note" rows="4"></textarea>
-      </label>
-
-      <label>
-        Фото
-        <input id="station-photo" type="file" accept="image/*">
-      </label>
-
-      <img id="photo-preview" style="max-width:100%; display:none; margin-top:8px;">
-
-      <button id="save-station">Сохранить станцию</button>
-      <button id="reset-station">Сбросить станцию</button>
+    <div id="station-info">
+      Кликни на станцию
     </div>
 
     <hr>
 
-    <button id="save-all">Сохранить всё</button>
-    <button id="reset-all">Очистить всё</button>
-    <button id="share-map">Поделиться картой</button>
+    <textarea id="note" placeholder="Заметка..."></textarea>
+    <input type="file" id="photo" accept="image/*" />
+
+    <button id="save">Сохранить</button>
+    <button id="reset">Сбросить всё</button>
 
     <p class="hint">
-      Мы не храним ваши данные и фотографии.
-      Всё сохраняется только в вашем браузере.
+      🔒 Фото и заметки шифруются в браузере.<br>
+      Мы не можем их просматривать.
     </p>
   </aside>
 
-  <main id="map-container">
-    <div id="map-scroll">
-      <div id="map-viewport">
-        <object
-          id="metro-map"
-          type="image/svg+xml"
-          data="moya_moskva_base_map.svg">
-        </object>
-      </div>
+  <div id="map-container">
+    <div id="map-viewport">
+      <object id="metro-map" data="map.svg" type="image/svg+xml"></object>
     </div>
-  </main>
+  </div>
 </div>
 
+<script src="crypto.js"></script>
+<script src="storage.js"></script>
 <script src="app.js"></script>
+
 </body>
 </html>
