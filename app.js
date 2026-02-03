@@ -1,13 +1,21 @@
 const mapObject = document.getElementById("metro-map");
-const info = document.getElementById("station-info");
 const viewport = document.getElementById("map-viewport");
 
-// ====== STATIONS ======
+const emptyState = document.getElementById("empty-state");
+const editor = document.getElementById("editor");
+const nameInput = document.getElementById("station-name");
+const noteInput = document.getElementById("station-note");
+const saveBtn = document.getElementById("save-station");
+const resetBtn = document.getElementById("reset-station");
+
+let activeStation = null;
+let activeId = null;
+
+// ====== LOAD SVG & STATIONS ======
 mapObject.addEventListener("load", () => {
   const svg = mapObject.contentDocument;
-
-  // станции = названия
   const stations = svg.querySelectorAll("text");
+
   const saved = JSON.parse(localStorage.getItem("stations") || "{}");
 
   stations.forEach((station, index) => {
@@ -18,7 +26,7 @@ mapObject.addEventListener("load", () => {
     station.style.cursor = "pointer";
 
     if (saved[id]) {
-      station.textContent = saved[id];
+      station.textContent = saved[id].name;
       station.style.fontWeight = "bold";
     }
 
@@ -31,22 +39,42 @@ mapObject.addEventListener("load", () => {
     });
 
     station.addEventListener("click", (e) => {
-      e.stopPropagation(); // важно для pan
-      const name = prompt("Название станции:", station.textContent);
-      if (!name) return;
+      e.stopPropagation();
 
-      station.textContent = name;
-      station.style.fontWeight = "bold";
+      activeStation = station;
+      activeId = id;
 
-      saved[id] = name;
-      localStorage.setItem("stations", JSON.stringify(saved));
+      emptyState.hidden = true;
+      editor.hidden = false;
 
-      info.innerHTML = `
-        <strong>${name}</strong>
-        <p>Ранее: ${originalName}</p>
-      `;
+      nameInput.value = saved[id]?.name || station.textContent;
+      noteInput.value = saved[id]?.note || "";
     });
   });
+
+  // ===== SAVE =====
+  saveBtn.onclick = () => {
+    if (!activeStation || !activeId) return;
+
+    const name = nameInput.value.trim();
+    const note = noteInput.value.trim();
+    if (!name) return;
+
+    activeStation.textContent = name;
+    activeStation.style.fontWeight = "bold";
+
+    saved[activeId] = { name, note };
+    localStorage.setItem("stations", JSON.stringify(saved));
+  };
+
+  // ===== RESET =====
+  resetBtn.onclick = () => {
+    if (!activeStation || !activeId) return;
+
+    delete saved[activeId];
+    localStorage.setItem("stations", JSON.stringify(saved));
+    location.reload();
+  };
 });
 
 // ====== ZOOM & PAN ======
