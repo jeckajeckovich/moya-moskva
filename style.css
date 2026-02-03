@@ -55,5 +55,14 @@ h1 {
 #metro-map svg * {
   pointer-events: all;
 }
+#map-viewport {
+  transform-origin: 0 0;
+  cursor: grab;
+}
+
+#map-viewport:active {
+  cursor: grabbing;
+}
+
 
 
