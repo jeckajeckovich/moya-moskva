@@ -31,6 +31,25 @@ let currentStationId = null;
 // ===== MAP LOAD =====
 mapObject.addEventListener("load", () => {
   const svg = mapObject.contentDocument;
+// ===== STATION BINDING =====
+const stations = svg.querySelectorAll("circle");
+
+stations.forEach(station => {
+  station.classList.add("station");
+
+  station.addEventListener("click", (e) => {
+    e.stopPropagation();
+
+    const name =
+      station.getAttribute("data-name") ||
+      station.getAttribute("aria-label") ||
+      station.id;
+
+    if (!name) return;
+
+    selectStation(name);
+  });
+});
 
   // Берём все названия станций
   const stations = svg.querySelectorAll("text");
