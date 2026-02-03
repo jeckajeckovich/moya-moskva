@@ -23,3 +23,14 @@
   max-height: none;
   overflow: visible;
 }
+/* ===== СТАНЦИИ ===== */
+.station-empty {
+  opacity: 0.35;
+  font-weight: 400;
+}
+
+.station-filled {
+  opacity: 1;
+  font-weight: 700;
+  fill: #000;
+}
