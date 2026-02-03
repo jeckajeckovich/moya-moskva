@@ -47,9 +47,10 @@ h1 {
 /* Правая часть */
 #map-container {
   flex: 1;
-  overflow: auto;
   position: relative;
+  overflow: hidden;          /* 🔑 УБИРАЕМ ЛИШНИЙ СКРОЛЛ */
 }
+
 
 /* viewport — якорь слева */
 #map-viewport {
@@ -67,7 +68,7 @@ h1 {
   width: 100%;
   height: 100%;
   min-width: 1200px;
-  min-height: 1200px;
+
   max-width: none;
   max-height: none;
   overflow: visible;
@@ -76,6 +77,11 @@ h1 {
 
 #metro-map svg {
   pointer-events: auto;
+}
+#map-scroll {
+  width: 100%;
+  height: 100%;
+  overflow: auto;            /* скролл ТОЛЬКО ЗДЕСЬ */
 }
 
 #metro-map svg * {
