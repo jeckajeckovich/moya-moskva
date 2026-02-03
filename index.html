@@ -24,27 +24,45 @@
       </label>
 
       <label>
-        Описание
+        Заметка
         <textarea id="station-note" rows="4"></textarea>
       </label>
 
-      <button id="save-station">Сохранить</button>
-      <button id="reset-station">Сбросить</button>
+      <label>
+        Фото
+        <input id="station-photo" type="file" accept="image/*">
+      </label>
+
+      <img id="photo-preview" style="max-width:100%; display:none; margin-top:8px;">
+
+      <button id="save-station">Сохранить станцию</button>
+      <button id="reset-station">Сбросить станцию</button>
     </div>
+
+    <hr>
+
+    <button id="save-all">Сохранить всё</button>
+    <button id="reset-all">Очистить всё</button>
+    <button id="share-map">Поделиться картой</button>
+
+    <p class="hint">
+      Мы не храним ваши данные и фотографии.
+      Всё сохраняется только в вашем браузере.
+    </p>
   </aside>
 
- <main id="map-container">
-  <div id="map-scroll">
-    <div id="map-viewport">
-      <object
-        id="metro-map"
-        type="image/svg+xml"
-        data="moya_moskva_base_map.svg">
-      </object>
+  <main id="map-container">
+    <div id="map-scroll">
+      <div id="map-viewport">
+        <object
+          id="metro-map"
+          type="image/svg+xml"
+          data="moya_moskva_base_map.svg">
+        </object>
+      </div>
     </div>
-  </div>
-</main>
-
+  </main>
+</div>
 
 <script src="app.js"></script>
 </body>
