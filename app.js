@@ -18,8 +18,44 @@ mapObject.addEventListener("load", () => {
   const stations = svg.querySelectorAll("text");
 
   stations.forEach((station, index) => {
-    const originalName = station.textContent.trim();
-    if (!originalName) return;
+  const originalName = station.textContent.trim();
+  if (!originalName) return;
+
+  const id = `station-${index}`;
+  station.dataset.id = id;
+  station.dataset.original = originalName;
+  station.style.cursor = "pointer";
+
+  // сбрасываем классы
+  station.classList.remove("station-filled", "station-empty");
+
+  // если есть воспоминание
+  if (data[id] && (data[id].note || data[id].photo)) {
+    station.classList.add("station-filled");
+  } else {
+    station.classList.add("station-empty");
+  }
+
+  // hover — делаем заметнее
+  station.addEventListener("mouseenter", () => {
+    station.style.opacity = "1";
+  });
+
+  station.addEventListener("mouseleave", () => {
+    if (station.classList.contains("station-empty")) {
+      station.style.opacity = "0.35";
+    }
+  });
+
+  // click
+  station.addEventListener("click", () => {
+    currentStationId = id;
+    info.textContent = station.textContent;
+    noteInput.value = data[id]?.note || "";
+    fileInput.value = "";
+  });
+});
+
 
     const id = `station-${index}`;
     station.dataset.id = id;
