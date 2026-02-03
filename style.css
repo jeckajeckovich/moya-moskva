@@ -23,19 +23,45 @@ h1 {
   box-sizing: border-box;
 }
 
+#sidebar label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+#sidebar input,
+#sidebar textarea {
+  width: 100%;
+  margin-top: 4px;
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+#sidebar button {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  cursor: pointer;
+}
+
 /* Правая часть */
 #map-container {
   flex: 1;
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
   overflow: auto;
-  padding: 24px 24px 24px 0; /* убрали левый отступ */
+  position: relative;
 }
 
+/* viewport — якорь слева */
+#map-viewport {
+  transform-origin: 0 0;
+  cursor: grab;
+  margin-left: -400px; /* ← можно менять: -300 / -500 */
+}
 
+#map-viewport:active {
+  cursor: grabbing;
+}
 
-/* SVG */
 /* SVG */
 #metro-map {
   width: 100%;
@@ -55,14 +81,3 @@ h1 {
 #metro-map svg * {
   pointer-events: all;
 }
-#map-viewport {
-  transform-origin: 0 0;
-  cursor: grab;
-}
-
-#map-viewport:active {
-  cursor: grabbing;
-}
-
-
-
