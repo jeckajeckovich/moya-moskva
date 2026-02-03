@@ -1,3 +1,21 @@
+// ===== MAP TITLE =====
+const mapTitle = document.getElementById("map-title");
+const mapNameInput = document.getElementById("map-name-input");
+
+const savedMapName = localStorage.getItem("mapName");
+if (savedMapName) {
+  mapTitle.textContent = savedMapName;
+  mapNameInput.value = savedMapName;
+}
+
+mapNameInput.addEventListener("input", () => {
+  const value = mapNameInput.value.trim();
+  if (value) {
+    mapTitle.textContent = value;
+    localStorage.setItem("mapName", value);
+  }
+});
+
 // ===== DOM =====
 const mapObject = document.getElementById("metro-map");
 const info = document.getElementById("station-info");
