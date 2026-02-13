@@ -2,6 +2,7 @@
 // DB
 // ==============================
 const db = window.db;
+const storage = window.storage;
 
 // ==============================
 // DOM
@@ -20,8 +21,8 @@ const accessCodeInput = document.getElementById("access-code-input");
 const loadResult = document.getElementById("load-result");
 const mapTitle = document.getElementById("map-title");
 const mapNameInput = document.getElementById("map-name-input");
-const viewport = document.getElementById("map-viewport");
 const photoPreview = document.getElementById("photo-preview");
+
 // ==============================
 // STATE
 // ==============================
@@ -75,8 +76,8 @@ mapObject.addEventListener("load", () => {
         photoPreview.style.display = "none";
       }
     });
-  }); // ← ВАЖНО: закрываем forEach
-});     // ← закрываем addEventListener
+  });
+});
 
 // ==============================
 // SAVE
@@ -97,21 +98,18 @@ saveBtn.addEventListener("click", async () => {
     const file = fileInput.files[0];
 
     if (file) {
-      const storage = window.storage;
       const fileRef = storage
         .ref()
         .child("photos/" + Date.now() + "_" + file.name);
 
       await fileRef.put(file);
       const downloadURL = await fileRef.getDownloadURL();
-
       data[currentStationId].photo = downloadURL;
     }
 
     localStorage.setItem("stations", JSON.stringify(data));
     updateVisuals();
 
-    // показать превью
     if (data[currentStationId].photo) {
       photoPreview.src = data[currentStationId].photo;
       photoPreview.style.display = "block";
@@ -124,6 +122,7 @@ saveBtn.addEventListener("click", async () => {
     alert("Ошибка загрузки фото");
   }
 });
+
 // ==============================
 // RESET
 // ==============================
@@ -134,6 +133,7 @@ resetBtn.addEventListener("click", () => {
   updateVisuals();
   info.textContent = "Кликните на станцию";
   noteInput.value = "";
+  photoPreview.style.display = "none";
 });
 
 // ==============================
@@ -157,6 +157,7 @@ function updateVisuals() {
 // ==============================
 async function encryptData(payload, password) {
   const enc = new TextEncoder();
+
   const keyMaterial = await crypto.subtle.importKey(
     "raw",
     enc.encode(password),
@@ -166,6 +167,7 @@ async function encryptData(payload, password) {
   );
 
   const salt = crypto.getRandomValues(new Uint8Array(16));
+
   const key = await crypto.subtle.deriveKey(
     { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
     keyMaterial,
@@ -175,6 +177,7 @@ async function encryptData(payload, password) {
   );
 
   const iv = crypto.getRandomValues(new Uint8Array(12));
+
   const encrypted = await crypto.subtle.encrypt(
     { name: "AES-GCM", iv },
     key,
@@ -256,9 +259,6 @@ shareBtn.addEventListener("click", async () => {
 // ==============================
 // LOAD
 // ==============================
-// ==============================
-// LOAD
-// ==============================
 loadBtn.addEventListener("click", async () => {
   const mapId = mapCodeInput.value.trim();
   const password = accessCodeInput.value.trim();
@@ -290,7 +290,6 @@ loadBtn.addEventListener("click", async () => {
       mapNameInput.value = decrypted.mapName;
     }
 
-    // ждём загрузку SVG
     if (mapObject.contentDocument) {
       updateVisuals();
     } else {
