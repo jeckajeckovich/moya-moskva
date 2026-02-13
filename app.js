@@ -1,30 +1,8 @@
 // ================================
-// FIREBASE
-// ================================
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  doc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyC0x6YWKPKC7McI58rEgHxnS9OXSYPMuH4",
-  authDomain: "moya-moskva.firebaseapp.com",
-  projectId: "moya-moskva",
-  storageBucket: "moya-moskva.firebasestorage.app",
-  messagingSenderId: "397269931085",
-  appId: "1:397269931085:web:a5c54a888396794a25b804"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// ================================
 // DOM
 // ================================
+const db = window.db;
+
 const mapObject = document.getElementById("metro-map");
 const info = document.getElementById("station-info");
 const noteInput = document.getElementById("note");
@@ -54,9 +32,8 @@ if (savedMapName) {
 }
 
 mapNameInput.addEventListener("input", () => {
-  const value = mapNameInput.value.trim();
-  mapTitle.textContent = value;
-  localStorage.setItem("mapName", value);
+  localStorage.setItem("mapName", mapNameInput.value);
+  mapTitle.textContent = mapNameInput.value;
 });
 
 // ================================
@@ -64,13 +41,15 @@ mapNameInput.addEventListener("input", () => {
 // ================================
 mapObject.addEventListener("load", () => {
   const svg = mapObject.contentDocument;
+  if (!svg) return;
+
   const stations = svg.querySelectorAll("text");
 
   stations.forEach((station, index) => {
-    const originalName = station.textContent.trim();
-    if (!originalName) return;
+    const name = station.textContent.trim();
+    if (!name) return;
 
-    const id = `station-${index}`;
+    const id = "station-" + index;
     station.dataset.id = id;
     station.classList.add("station");
     station.style.cursor = "pointer";
@@ -79,7 +58,7 @@ mapObject.addEventListener("load", () => {
 
     station.addEventListener("click", () => {
       currentStationId = id;
-      info.textContent = originalName;
+      info.textContent = name;
       noteInput.value = data[id]?.note || "";
       fileInput.value = "";
     });
@@ -102,17 +81,17 @@ saveBtn.addEventListener("click", () => {
     const reader = new FileReader();
     reader.onload = () => {
       data[currentStationId].photo = reader.result;
-      persistLocal();
+      persist();
     };
     reader.readAsDataURL(file);
   } else {
-    persistLocal();
+    persist();
   }
 });
 
-function persistLocal() {
+function persist() {
   localStorage.setItem("stations", JSON.stringify(data));
-  updateAllVisual();
+  updateVisuals();
 }
 
 // ================================
@@ -120,8 +99,11 @@ function persistLocal() {
 // ================================
 resetBtn.addEventListener("click", () => {
   if (!confirm("Сбросить всё?")) return;
-  localStorage.clear();
-  location.reload();
+  localStorage.removeItem("stations");
+  data = {};
+  updateVisuals();
+  info.textContent = "Кликните на станцию";
+  noteInput.value = "";
 });
 
 // ================================
@@ -135,7 +117,7 @@ function applyVisual(station) {
   station.style.fontWeight = hasData ? "700" : "400";
 }
 
-function updateAllVisual() {
+function updateVisuals() {
   const svg = mapObject.contentDocument;
   if (!svg) return;
   svg.querySelectorAll("text.station").forEach(applyVisual);
@@ -183,7 +165,7 @@ window.addEventListener("mouseup", () => {
 });
 
 // ================================
-// CRYPTO
+// CRYPTO (AES-GCM)
 // ================================
 async function encryptData(data, password) {
   const enc = new TextEncoder();
@@ -196,7 +178,6 @@ async function encryptData(data, password) {
   );
 
   const salt = crypto.getRandomValues(new Uint8Array(16));
-
   const key = await crypto.subtle.deriveKey(
     { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
     keyMaterial,
@@ -206,7 +187,6 @@ async function encryptData(data, password) {
   );
 
   const iv = crypto.getRandomValues(new Uint8Array(12));
-
   const encrypted = await crypto.subtle.encrypt(
     { name: "AES-GCM", iv },
     key,
@@ -218,40 +198,6 @@ async function encryptData(data, password) {
     iv: Array.from(iv),
     salt: Array.from(salt)
   };
-}
-
-async function decryptData(payload, password) {
-  const enc = new TextEncoder();
-  const dec = new TextDecoder();
-
-  const keyMaterial = await crypto.subtle.importKey(
-    "raw",
-    enc.encode(password),
-    "PBKDF2",
-    false,
-    ["deriveKey"]
-  );
-
-  const key = await crypto.subtle.deriveKey(
-    {
-      name: "PBKDF2",
-      salt: new Uint8Array(payload.salt),
-      iterations: 100000,
-      hash: "SHA-256"
-    },
-    keyMaterial,
-    { name: "AES-GCM", length: 256 },
-    false,
-    ["decrypt"]
-  );
-
-  const decrypted = await crypto.subtle.decrypt(
-    { name: "AES-GCM", iv: new Uint8Array(payload.iv) },
-    key,
-    new Uint8Array(payload.encrypted)
-  );
-
-  return JSON.parse(dec.decode(decrypted));
 }
 
 // ================================
@@ -268,7 +214,7 @@ shareBtn.addEventListener("click", async () => {
 
   const encryptedPayload = await encryptData(payload, password);
 
-  const docRef = await addDoc(collection(db, "maps"), {
+  const docRef = await db.collection("maps").add({
     payload: encryptedPayload,
     createdAt: Date.now()
   });
@@ -281,39 +227,3 @@ shareBtn.addEventListener("click", async () => {
     🔐 Код: <strong>${password}</strong>
   `;
 });
-
-// ================================
-// LOAD SHARED MAP
-// ================================
-async function loadSharedMap() {
-  const params = new URLSearchParams(window.location.search);
-  const mapId = params.get("map");
-  if (!mapId) return;
-
-  const snapshot = await getDoc(doc(db, "maps", mapId));
-  if (!snapshot.exists()) return;
-
-  const password = prompt("Введите код доступа:");
-  if (!password) return;
-
-  try {
-    const decrypted = await decryptData(
-      snapshot.data().payload,
-      password
-    );
-
-    data = decrypted.stations || {};
-    localStorage.setItem("stations", JSON.stringify(data));
-
-    if (decrypted.mapName) {
-      localStorage.setItem("mapName", decrypted.mapName);
-      mapTitle.textContent = decrypted.mapName;
-    }
-
-    updateAllVisual();
-  } catch (e) {
-    alert("Неверный код");
-  }
-}
-
-loadSharedMap();
