@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Следующая станция</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -31,8 +31,14 @@
     <div id="station-info">Кликните на станцию</div>
 
     <textarea id="note" rows="4" placeholder="Заметка…"></textarea>
-   <img id="photo-preview" style="display:none; max-width:100%; margin-top:10px; border-radius:8px;">
-    <input type="file" id="photo">
+
+    <!-- Фото превью -->
+    <img
+      id="photo-preview"
+      style="display:none; max-width:100%; margin-top:10px; border-radius:8px;"
+    />
+
+    <input type="file" id="photo" accept="image/*">
 
     <button id="save">Сохранить</button>
     <button id="reset">Сбросить всё</button>
@@ -76,7 +82,10 @@
 
 </div>
 
-<!-- FIREBASE COMPAT -->
+<!-- ========================= -->
+<!-- FIREBASE (compat версия) -->
+<!-- ========================= -->
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
@@ -86,7 +95,7 @@
     apiKey: "AIzaSyC0x6YWKPKC7McI58rEgHxnS9OXSYPMuH4",
     authDomain: "moya-moskva.firebaseapp.com",
     projectId: "moya-moskva",
-    storageBucket: "moya-moskva.firebasestorage.app",
+    storageBucket: "moya-moskva.appspot.com", // ← ИСПРАВЛЕНО
     messagingSenderId: "397269931085",
     appId: "1:397269931085:web:a5c54a888396794a25b804"
   };
