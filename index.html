@@ -2,30 +2,35 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Моя Москва</title>
+  <title>Следующая станция</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
- <header id="topbar">
-  <div class="topbar-inner">
-    <h1 id="map-title">Следующая станция</h1>
 
-    <p class="subtitle">
-      Соберите свои воспоминания на карте московского метро —
-      места, люди, события, которые были важны именно вам.
-    </p>
+  <!-- ===== TOP BAR ===== -->
+  <header id="topbar">
+    <div class="topbar-inner">
+      <h1 id="map-title">Следующая станция</h1>
 
-    <input
-      id="map-name-input"
-      type="text"
-      placeholder="Название вашей карты (например: Моя Москва 2016–2024)"
-    />
-  </div>
-</header>
+      <p class="subtitle">
+        Соберите свои воспоминания на карте московского метро —
+        места, люди, события, которые были важны именно вам.
+      </p>
+
+      <input
+        id="map-name-input"
+        type="text"
+        placeholder="Название вашей карты (например: Моя Москва 2016–2024)"
+      />
+    </div>
+  </header>
 
 
+  <!-- ===== MAIN LAYOUT ===== -->
   <div id="app">
-    <!-- ЛЕВАЯ ПАНЕЛЬ -->
+
+    <!-- ===== SIDEBAR ===== -->
     <aside id="sidebar">
       <h2>Станция</h2>
       <div id="station-info">Кликните на станцию</div>
@@ -47,7 +52,8 @@
       </p>
     </aside>
 
-    <!-- КАРТА -->
+
+    <!-- ===== MAP ===== -->
     <main id="map-container">
       <div id="map-viewport">
         <object
@@ -57,32 +63,38 @@
         </object>
       </div>
     </main>
+
   </div>
 
+
+  <!-- ===== LOCAL SCRIPTS ===== -->
   <script src="crypto.js"></script>
   <script src="storage.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyC0x6YWKPKC7McI58rEgHxnS9OXSYPMuH4",
-    authDomain: "moya-moskva.firebaseapp.com",
-    projectId: "moya-moskva",
-    storageBucket: "moya-moskva.firebasestorage.app",
-    messagingSenderId: "397269931085",
-    appId: "1:397269931085:web:a5c54a888396794a25b804"
-  };
+  <!-- ===== FIREBASE (MODULE) ===== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    const firebaseConfig = {
+      apiKey: "AIzaSyC0x6YWKPKC7McI58rEgHxnS9OXSYPMuH4",
+      authDomain: "moya-moskva.firebaseapp.com",
+      projectId: "moya-moskva",
+      storageBucket: "moya-moskva.firebasestorage.app",
+      messagingSenderId: "397269931085",
+      appId: "1:397269931085:web:a5c54a888396794a25b804"
+    };
 
-  window.db = db; // делаем доступным глобально
-</script>
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.db = db;
+  </script>
+
+
+  <!-- ===== MAIN APP ===== -->
   <script src="app.js"></script>
-</body>
 
+</body>
 </html>
