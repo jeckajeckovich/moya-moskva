@@ -61,6 +61,22 @@
 
   <script src="crypto.js"></script>
   <script src="storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "ТВОЙ_API_KEY",
+    authDomain: "ТВОЙ_AUTH_DOMAIN",
+    projectId: "ТВОЙ_PROJECT_ID",
+    storageBucket: "ТВОЙ_STORAGE",
+    messagingSenderId: "ТВОЙ_MSG_ID",
+    appId: "ТВОЙ_APP_ID"
+  };
+
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
   <script src="app.js"></script>
 </body>
 
