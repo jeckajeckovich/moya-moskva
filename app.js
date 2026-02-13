@@ -62,19 +62,21 @@ mapObject.addEventListener("load", () => {
 
     applyVisual(station);
 
- station.addEventListener("click", () => {
-  currentStationId = id;
-  info.textContent = name;
-  noteInput.value = data[id]?.note || "";
-  fileInput.value = "";
+    station.addEventListener("click", () => {
+      currentStationId = id;
+      info.textContent = name;
+      noteInput.value = data[id]?.note || "";
+      fileInput.value = "";
 
-  if (data[id]?.photo) {
-    photoPreview.src = data[id].photo;
-    photoPreview.style.display = "block";
-  } else {
-    photoPreview.style.display = "none";
-  }
-});
+      if (data[id]?.photo) {
+        photoPreview.src = data[id].photo;
+        photoPreview.style.display = "block";
+      } else {
+        photoPreview.style.display = "none";
+      }
+    });
+  }); // ← ВАЖНО: закрываем forEach
+});     // ← закрываем addEventListener
 
 // ==============================
 // SAVE
