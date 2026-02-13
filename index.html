@@ -27,7 +27,6 @@
   </header>
 
 
-  <!-- ===== MAIN LAYOUT ===== -->
   <div id="app">
 
     <!-- ===== SIDEBAR ===== -->
@@ -35,20 +34,21 @@
       <h2>Станция</h2>
       <div id="station-info">Кликните на станцию</div>
 
-      <textarea
-        id="note"
-        placeholder="Заметка…"
-        rows="4"
-      ></textarea>
+      <textarea id="note" placeholder="Заметка…" rows="4"></textarea>
 
       <input type="file" id="photo" />
 
       <button id="save">Сохранить</button>
       <button id="reset">Сбросить всё</button>
 
+      <hr style="margin:15px 0;">
+
+      <button id="share">Поделиться</button>
+      <div id="share-result"></div>
+
       <p class="privacy">
-        🔐 Фото и заметки хранятся только в вашем браузере.<br />
-        Мы не можем их просматривать.
+        🔐 Фото и заметки шифруются перед отправкой.<br>
+        Даже сервер не может их прочитать.
       </p>
     </aside>
 
@@ -67,16 +67,11 @@
   </div>
 
 
-  <!-- ===== LOCAL SCRIPTS ===== -->
-  <script src="crypto.js"></script>
-  <script src="storage.js"></script>
+  <!-- ===== FIREBASE ===== -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-
-  <!-- ===== FIREBASE (MODULE) ===== -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyC0x6YWKPKC7McI58rEgHxnS9OXSYPMuH4",
       authDomain: "moya-moskva.firebaseapp.com",
@@ -86,14 +81,10 @@
       appId: "1:397269931085:web:a5c54a888396794a25b804"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    window.db = db;
+    firebase.initializeApp(firebaseConfig);
+    window.db = firebase.firestore();
   </script>
 
-
-  <!-- ===== MAIN APP ===== -->
   <script src="app.js"></script>
 
 </body>
