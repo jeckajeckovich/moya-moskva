@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -78,6 +78,7 @@
 <!-- FIREBASE COMPAT -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 
 <script>
   const firebaseConfig = {
@@ -90,7 +91,9 @@
   };
 
   firebase.initializeApp(firebaseConfig);
+
   window.db = firebase.firestore();
+  window.storage = firebase.storage();   // ← ВОТ ЭТО ВАЖНО
 </script>
 
 <script src="app.js"></script>
