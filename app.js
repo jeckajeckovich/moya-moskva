@@ -96,7 +96,11 @@ saveBtn.addEventListener("click", () => {
 
 function persist() {
   localStorage.setItem("stations", JSON.stringify(data));
+ if (mapObject.contentDocument) {
   updateVisuals();
+} else {
+  mapObject.addEventListener("load", updateVisuals, { once: true });
+}
 }
 
 // ==============================
@@ -231,6 +235,9 @@ shareBtn.addEventListener("click", async () => {
 // ==============================
 // LOAD
 // ==============================
+// ==============================
+// LOAD
+// ==============================
 loadBtn.addEventListener("click", async () => {
   const mapId = mapCodeInput.value.trim();
   const password = accessCodeInput.value.trim();
@@ -243,7 +250,7 @@ loadBtn.addEventListener("click", async () => {
   try {
     const snapshot = await db.collection("maps").doc(mapId).get();
 
-    if (!snapshot.exists()) {
+    if (!snapshot.exists) {
       loadResult.textContent = "Карта не найдена";
       return;
     }
@@ -262,18 +269,15 @@ loadBtn.addEventListener("click", async () => {
       mapNameInput.value = decrypted.mapName;
     }
 
-    setTimeout(updateVisuals, 200);
+    // ждём загрузку SVG
+    if (mapObject.contentDocument) {
+      updateVisuals();
+    } else {
+      mapObject.addEventListener("load", updateVisuals, { once: true });
+    }
 
     loadResult.textContent = "Карта загружена!";
-  } catch (e) {
-    console.error(e);
-    loadResult.textContent = "Неверный код";
-  }
-});
-    // ВАЖНО: ждём загрузку SVG
-   setTimeout(updateVisuals, 200);
 
-    loadResult.textContent = "Карта загружена!";
   } catch (e) {
     console.error(e);
     loadResult.textContent = "Неверный код";
