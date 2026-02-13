@@ -82,18 +82,18 @@
 
 <script>
   const firebaseConfig = {
-    apiKey: "AIzaSyC0x6YWKPKC7McI58rEgHxnS9OXSYPMuH4",
-    authDomain: "moya-moskva.firebaseapp.com",
-    projectId: "moya-moskva",
-    storageBucket: "moya-moskva.firebasestorage.app",
-    messagingSenderId: "397269931085",
-    appId: "1:397269931085:web:a5c54a888396794a25b804"
+    apiKey: "...",
+    authDomain: "...",
+    projectId: "...",
+    storageBucket: "...",
+    messagingSenderId: "...",
+    appId: "..."
   };
 
   firebase.initializeApp(firebaseConfig);
 
   window.db = firebase.firestore();
-  window.storage = firebase.storage();   // ← ВОТ ЭТО ВАЖНО
+  window.storage = firebase.storage();
 </script>
 
 <script src="app.js"></script>
