@@ -1,5 +1,10 @@
 const db = window.db;
-
+import {
+  collection,
+  addDoc,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 // DOM
 const mapObject = document.getElementById("metro-map");
 const info = document.getElementById("station-info");
