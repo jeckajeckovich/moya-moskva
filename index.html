@@ -64,18 +64,23 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
 
-<script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
   const firebaseConfig = {
-    apiKey: "ТВОЙ_API_KEY",
-    authDomain: "ТВОЙ_AUTH_DOMAIN",
-    projectId: "ТВОЙ_PROJECT_ID",
-    storageBucket: "ТВОЙ_STORAGE",
-    messagingSenderId: "ТВОЙ_MSG_ID",
-    appId: "ТВОЙ_APP_ID"
+    apiKey: "AIzaSyC0x6YWKPKC7McI58rEgHxnS9OXSYPMuH4",
+    authDomain: "moya-moskva.firebaseapp.com",
+    projectId: "moya-moskva",
+    storageBucket: "moya-moskva.firebasestorage.app",
+    messagingSenderId: "397269931085",
+    appId: "1:397269931085:web:a5c54a888396794a25b804"
   };
 
-  const app = firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.db = db; // делаем доступным глобально
 </script>
   <script src="app.js"></script>
 </body>
