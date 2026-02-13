@@ -1,29 +1,45 @@
-const db = window.db;
+// =====================================
+// FIREBASE IMPORT (модульный стиль)
+// =====================================
 import {
   collection,
   addDoc,
   doc,
   getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const db = window.db;
+
+// =====================================
 // DOM
+// =====================================
 const mapObject = document.getElementById("metro-map");
 const info = document.getElementById("station-info");
 const noteInput = document.getElementById("note");
 const fileInput = document.getElementById("photo");
 const saveBtn = document.getElementById("save");
 const resetBtn = document.getElementById("reset");
+
 const shareBtn = document.getElementById("share");
 const shareResult = document.getElementById("share-result");
-const loadBtn = document.getElementById("load-shared");
-const accessInput = document.getElementById("access-code");
+
+const loadBtn = document.getElementById("load-map");
+const mapCodeInput = document.getElementById("map-code-input");
+const accessCodeInput = document.getElementById("access-code-input");
+const loadResult = document.getElementById("load-result");
+
 const mapTitle = document.getElementById("map-title");
 const mapNameInput = document.getElementById("map-name-input");
-const viewport = document.getElementById("map-viewport");
 
+// =====================================
+// LOCAL STATE
+// =====================================
 let data = JSON.parse(localStorage.getItem("stations") || "{}");
 let currentStationId = null;
 
-// ================= MAP TITLE =================
+// =====================================
+// MAP TITLE
+// =====================================
 const savedMapName = localStorage.getItem("mapName");
 if (savedMapName) {
   mapTitle.textContent = savedMapName;
@@ -35,7 +51,9 @@ mapNameInput.addEventListener("input", () => {
   mapTitle.textContent = mapNameInput.value;
 });
 
-// ================= LOAD SVG =================
+// =====================================
+// LOAD SVG
+// =====================================
 mapObject.addEventListener("load", () => {
   const svg = mapObject.contentDocument;
   if (!svg) return;
@@ -62,7 +80,9 @@ mapObject.addEventListener("load", () => {
   });
 });
 
-// ================= SAVE =================
+// =====================================
+// SAVE LOCAL
+// =====================================
 saveBtn.addEventListener("click", () => {
   if (!currentStationId) return alert("Выберите станцию");
 
@@ -88,7 +108,9 @@ function persist() {
   updateVisuals();
 }
 
-// ================= RESET =================
+// =====================================
+// RESET
+// =====================================
 resetBtn.addEventListener("click", () => {
   if (!confirm("Сбросить всё?")) return;
   localStorage.removeItem("stations");
@@ -96,7 +118,9 @@ resetBtn.addEventListener("click", () => {
   updateVisuals();
 });
 
-// ================= VISUAL =================
+// =====================================
+// VISUAL
+// =====================================
 function applyVisual(station) {
   const id = station.dataset.id;
   const hasData = data[id]?.note || data[id]?.photo;
@@ -110,9 +134,12 @@ function updateVisuals() {
   svg.querySelectorAll("text.station").forEach(applyVisual);
 }
 
-// ================= CRYPTO =================
+// =====================================
+// CRYPTO
+// =====================================
 async function encryptData(data, password) {
   const enc = new TextEncoder();
+
   const keyMaterial = await crypto.subtle.importKey(
     "raw",
     enc.encode(password),
@@ -122,6 +149,7 @@ async function encryptData(data, password) {
   );
 
   const salt = crypto.getRandomValues(new Uint8Array(16));
+
   const key = await crypto.subtle.deriveKey(
     { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
     keyMaterial,
@@ -131,6 +159,7 @@ async function encryptData(data, password) {
   );
 
   const iv = crypto.getRandomValues(new Uint8Array(12));
+
   const encrypted = await crypto.subtle.encrypt(
     { name: "AES-GCM", iv },
     key,
@@ -178,9 +207,11 @@ async function decryptData(payload, password) {
   return JSON.parse(dec.decode(decrypted));
 }
 
-// ================= SHARE =================
+// =====================================
+// SHARE (создание карты)
+// =====================================
 shareBtn.addEventListener("click", async () => {
-  const password = prompt("Придумайте код доступа:");
+  const password = prompt("Придумайте приватный код:");
   if (!password) return;
 
   const payload = {
@@ -190,33 +221,37 @@ shareBtn.addEventListener("click", async () => {
 
   const encryptedPayload = await encryptData(payload, password);
 
-  const docRef = await db.collection("maps").add({
+  const docRef = await addDoc(collection(db, "maps"), {
     payload: encryptedPayload,
     createdAt: Date.now()
   });
 
-  const link =
-    `${location.origin}${location.pathname}?map=${docRef.id}`;
-
   shareResult.innerHTML = `
-    🔗 <a href="${link}" target="_blank">${link}</a><br>
-    🔐 Код: <strong>${password}</strong>
+    🧭 Код карты: <strong>${docRef.id}</strong><br>
+    🔐 Приватный код: <strong>${password}</strong>
   `;
 });
 
-// ================= LOAD SHARED =================
+// =====================================
+// LOAD BY CODE
+// =====================================
 loadBtn.addEventListener("click", async () => {
-  const params = new URLSearchParams(window.location.search);
-  const mapId = params.get("map");
-  if (!mapId) return alert("Нет mapId в ссылке");
+  const mapId = mapCodeInput.value.trim();
+  const password = accessCodeInput.value.trim();
 
-  const password = accessInput.value.trim();
-  if (!password) return alert("Введите код");
-
-  const snapshot = await db.collection("maps").doc(mapId).get();
-  if (!snapshot.exists) return alert("Карта не найдена");
+  if (!mapId || !password) {
+    alert("Введите код карты и приватный код");
+    return;
+  }
 
   try {
+    const snapshot = await getDoc(doc(db, "maps", mapId));
+
+    if (!snapshot.exists()) {
+      loadResult.textContent = "Карта не найдена";
+      return;
+    }
+
     const decrypted = await decryptData(
       snapshot.data().payload,
       password
@@ -224,10 +259,15 @@ loadBtn.addEventListener("click", async () => {
 
     data = decrypted.stations || {};
     localStorage.setItem("stations", JSON.stringify(data));
-    updateVisuals();
 
-    alert("Карта загружена");
-  } catch {
-    alert("Неверный код");
+    if (decrypted.mapName) {
+      localStorage.setItem("mapName", decrypted.mapName);
+      mapTitle.textContent = decrypted.mapName;
+    }
+
+    updateVisuals();
+    loadResult.textContent = "Карта загружена!";
+  } catch (e) {
+    loadResult.textContent = "Неверный код";
   }
 });
