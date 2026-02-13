@@ -283,3 +283,41 @@ loadBtn.addEventListener("click", async () => {
     loadResult.textContent = "Неверный код";
   }
 });
+const storage = window.storage;
+
+const file = fileInput.files[0];
+
+if (file) {
+  const storageRef = storage.ref();
+  const fileRef = storageRef.child(
+    "photos/" + Date.now() + "_" + file.name
+  );
+
+  await fileRef.put(file);
+
+  const downloadURL = await fileRef.getDownloadURL();
+
+  data[currentStationId].photo = downloadURL;
+  persist();
+} else {
+  persist();
+}
+const storage = window.storage;
+
+const file = fileInput.files[0];
+
+if (file) {
+  const storageRef = storage.ref();
+  const fileRef = storageRef.child(
+    "photos/" + Date.now() + "_" + file.name
+  );
+
+  await fileRef.put(file);
+
+  const downloadURL = await fileRef.getDownloadURL();
+
+  data[currentStationId].photo = downloadURL;
+  persist();
+} else {
+  persist();
+}
