@@ -214,7 +214,7 @@ shareBtn.addEventListener("click", async () => {
 
     const docRef = await db.collection("maps").add({
       payload: encryptedPayload,
-      createdAt: Date.now()
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
     shareResult.innerHTML = `
@@ -224,7 +224,7 @@ shareBtn.addEventListener("click", async () => {
 
   } catch (err) {
     console.error(err);
-    alert("Ошибка сохранения. Проверь Firestore Rules.");
+    alert("Ошибка записи в Firestore");
   }
 });
 
