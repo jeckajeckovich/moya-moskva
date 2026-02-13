@@ -21,7 +21,7 @@ const loadResult = document.getElementById("load-result");
 const mapTitle = document.getElementById("map-title");
 const mapNameInput = document.getElementById("map-name-input");
 const viewport = document.getElementById("map-viewport");
-
+const photoPreview = document.getElementById("photo-preview");
 // ==============================
 // STATE
 // ==============================
@@ -62,13 +62,18 @@ mapObject.addEventListener("load", () => {
 
     applyVisual(station);
 
-    station.addEventListener("click", () => {
-      currentStationId = id;
-      info.textContent = name;
-      noteInput.value = data[id]?.note || "";
-      fileInput.value = "";
-    });
-  });
+ station.addEventListener("click", () => {
+  currentStationId = id;
+  info.textContent = name;
+  noteInput.value = data[id]?.note || "";
+  fileInput.value = "";
+
+  if (data[id]?.photo) {
+    photoPreview.src = data[id].photo;
+    photoPreview.style.display = "block";
+  } else {
+    photoPreview.style.display = "none";
+  }
 });
 
 // ==============================
@@ -86,15 +91,14 @@ saveBtn.addEventListener("click", async () => {
 
   data[currentStationId].note = noteInput.value;
 
-  const file = fileInput.files[0];
-
   try {
+    const file = fileInput.files[0];
+
     if (file) {
       const storage = window.storage;
-      const storageRef = storage.ref();
-      const fileRef = storageRef.child(
-        "photos/" + Date.now() + "_" + file.name
-      );
+      const fileRef = storage
+        .ref()
+        .child("photos/" + Date.now() + "_" + file.name);
 
       await fileRef.put(file);
       const downloadURL = await fileRef.getDownloadURL();
@@ -102,7 +106,15 @@ saveBtn.addEventListener("click", async () => {
       data[currentStationId].photo = downloadURL;
     }
 
-    persist();
+    localStorage.setItem("stations", JSON.stringify(data));
+    updateVisuals();
+
+    // показать превью
+    if (data[currentStationId].photo) {
+      photoPreview.src = data[currentStationId].photo;
+      photoPreview.style.display = "block";
+    }
+
     alert("Сохранено!");
 
   } catch (err) {
@@ -110,7 +122,6 @@ saveBtn.addEventListener("click", async () => {
     alert("Ошибка загрузки фото");
   }
 });
-
 // ==============================
 // RESET
 // ==============================
