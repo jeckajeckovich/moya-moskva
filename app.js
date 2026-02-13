@@ -240,14 +240,14 @@ loadBtn.addEventListener("click", async () => {
     return;
   }
 
-  const snapshot = await db.collection("maps").doc(mapId).get();
-
-  if (!snapshot.exists) {
-    loadResult.textContent = "Карта не найдена";
-    return;
-  }
-
   try {
+    const snapshot = await db.collection("maps").doc(mapId).get();
+
+    if (!snapshot.exists()) {
+      loadResult.textContent = "Карта не найдена";
+      return;
+    }
+
     const decrypted = await decryptData(
       snapshot.data().payload,
       password
@@ -262,12 +262,16 @@ loadBtn.addEventListener("click", async () => {
       mapNameInput.value = decrypted.mapName;
     }
 
+    setTimeout(updateVisuals, 200);
+
+    loadResult.textContent = "Карта загружена!";
+  } catch (e) {
+    console.error(e);
+    loadResult.textContent = "Неверный код";
+  }
+});
     // ВАЖНО: ждём загрузку SVG
-    if (mapObject.contentDocument) {
-      updateVisuals();
-    } else {
-      mapObject.addEventListener("load", updateVisuals, { once: true });
-    }
+   setTimeout(updateVisuals, 200);
 
     loadResult.textContent = "Карта загружена!";
   } catch (e) {
