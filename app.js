@@ -201,25 +201,31 @@ async function decryptData(payload, password) {
 // SHARE
 // ==============================
 shareBtn.addEventListener("click", async () => {
-  const password = prompt("Придумайте приватный код:");
-  if (!password) return;
+  try {
+    const password = prompt("Придумайте приватный код:");
+    if (!password) return;
 
-  const payload = {
-    mapName: localStorage.getItem("mapName") || "",
-    stations: data
-  };
+    const payload = {
+      mapName: localStorage.getItem("mapName") || "",
+      stations: data
+    };
 
-  const encryptedPayload = await encryptData(payload, password);
+    const encryptedPayload = await encryptData(payload, password);
 
-  const docRef = await db.collection("maps").add({
-    payload: encryptedPayload,
-    createdAt: Date.now()
-  });
+    const docRef = await db.collection("maps").add({
+      payload: encryptedPayload,
+      createdAt: Date.now()
+    });
 
-  shareResult.innerHTML = `
-    🧭 Код карты: <strong>${docRef.id}</strong><br>
-    🔐 Приватный код: <strong>${password}</strong>
-  `;
+    shareResult.innerHTML = `
+      🧭 Код карты: <strong>${docRef.id}</strong><br>
+      🔐 Приватный код: <strong>${password}</strong>
+    `;
+
+  } catch (err) {
+    console.error(err);
+    alert("Ошибка сохранения. Проверь Firestore Rules.");
+  }
 });
 
 // ==============================
