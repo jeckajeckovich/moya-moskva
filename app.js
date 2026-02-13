@@ -218,7 +218,7 @@ shareBtn.addEventListener("click", async () => {
 
     const docRef = await db.collection("maps").add({
       payload: encryptedPayload,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      createdAt: Date.now()
     });
 
     shareResult.innerHTML = `
