@@ -1,111 +1,59 @@
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #f5f5f5;
+  font-family: sans-serif;
 }
 
-/* ===== TOP BAR ===== */
-#topbar {
-  padding: 24px 16px 20px;
-  background: #fff;
-  border-bottom: 1px solid #ddd;
-  text-align: center;
-}
-
-.topbar-inner {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-#topbar h1 {
-  margin: 0;
-  font-size: 32px;
-  font-weight: 700;
-}
-
-.subtitle {
-  margin: 10px 0 16px;
-  font-size: 16px;
-  line-height: 1.4;
-  color: #555;
-}
-
-#map-name-input {
-  width: 100%;
-  max-width: 420px;
-  padding: 8px 10px;
-  font-size: 14px;
-}
-
-/* ===== LAYOUT ===== */
 #app {
   display: flex;
-  height: calc(100vh - 96px);
+  height: calc(100vh - 160px);
 }
 
-/* ===== SIDEBAR ===== */
+/* БОКОВАЯ ПАНЕЛЬ */
 #sidebar {
   width: 320px;
-  background: #fff;
-  border-right: 1px solid #ddd;
-  padding: 16px;
-  box-sizing: border-box;
+  padding: 20px;
+  background: #f5f5f5;
+  overflow-y: auto;
 }
 
-#sidebar h2 {
-  margin-top: 0;
-}
-
-#station-info {
-  margin-bottom: 8px;
-  font-weight: 600;
-}
-
-#note {
-  width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 8px;
-}
-
-#sidebar button {
-  margin-right: 4px;
-  margin-top: 4px;
-}
-
-.privacy {
-  margin-top: 12px;
-  font-size: 12px;
-  color: #555;
-}
-
-/* ===== MAP ===== */
+/* КОНТЕЙНЕР КАРТЫ */
 #map-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
-  position: relative;
+  background: #e9efe9;
+}
+
+/* VIEWPORT */
+#map-viewport {
   width: 100%;
   height: 100%;
-  touch-action: none; /* важно для мобильных */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-#map-viewport {
-  transform-origin: 0 0;
-  will-change: transform;
-  cursor: grab;
+/* SVG */
+#metro-map {
+  width: 100%;
+  height: 100%;
+  max-width: 1200px;
 }
 
-#map-viewport:active {
-  cursor: grabbing;
-}
+/* MOBILE */
+@media (max-width: 900px) {
+  #app {
+    flex-direction: column;
+  }
 
-/* ===== STATIONS (ЕДИНСТВЕННЫЕ НУЖНЫЕ) ===== */
-.station-empty {
-  opacity: 0.35;
-  font-weight: 400;
-  fill: #777;
-}
+  #sidebar {
+    width: 100%;
+    height: 50vh;
+  }
 
-.station-filled {
-  opacity: 1;
-  font-weight: 700;
-  fill: #000;
+  #map-container {
+    height: 50vh;
+  }
 }
