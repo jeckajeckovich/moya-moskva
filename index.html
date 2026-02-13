@@ -8,89 +8,77 @@
 
 <body>
 
-  <!-- ===== TOP BAR ===== -->
-  <header id="topbar">
-    <div class="topbar-inner">
-      <h1 id="map-title">Следующая станция</h1>
-
-      <p class="subtitle">
-        Соберите свои воспоминания на карте московского метро —
-        места, люди, события, которые были важны именно вам.
-      </p>
-
-      <input
-        id="map-name-input"
-        type="text"
-        placeholder="Название вашей карты (например: Моя Москва 2016–2024)"
-      />
-    </div>
-  </header>
-
-
-  <div id="app">
-
-    <!-- ===== SIDEBAR ===== -->
-    <aside id="sidebar">
-      <h2>Станция</h2>
-      <div id="station-info">Кликните на станцию</div>
-
-      <textarea id="note" placeholder="Заметка…" rows="4"></textarea>
-
-      <input type="file" id="photo" />
-
-      <button id="save">Сохранить</button>
-      <hr>
-
-<h3>Открыть карту</h3>
-<input id="access-code" type="text" placeholder="Введите код доступа">
-<button id="load-shared">Открыть</button>
-      <button id="reset">Сбросить всё</button>
-
-      <hr style="margin:15px 0;">
-
-      <button id="share">Поделиться</button>
-      <div id="share-result"></div>
-
-      <p class="privacy">
-        🔐 Фото и заметки шифруются перед отправкой.<br>
-        Даже сервер не может их прочитать.
-      </p>
-    </aside>
-
-
-    <!-- ===== MAP ===== -->
-    <main id="map-container">
-      <div id="map-viewport">
-        <object
-          id="metro-map"
-          type="image/svg+xml"
-          data="moya_moskva_base_map.svg">
-        </object>
-      </div>
-    </main>
-
+<header id="topbar">
+  <div class="topbar-inner">
+    <h1 id="map-title">Следующая станция</h1>
+    <p class="subtitle">
+      Соберите свои воспоминания на карте московского метро —
+      места, люди, события, которые были важны именно вам.
+    </p>
+    <input
+      id="map-name-input"
+      type="text"
+      placeholder="Название вашей карты"
+    />
   </div>
+</header>
 
+<div id="app">
 
-  <!-- ===== FIREBASE ===== -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <aside id="sidebar">
+    <h2>Станция</h2>
+    <div id="station-info">Кликните на станцию</div>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyC0x6YWKPKC7McI58rEgHxnS9OXSYPMuH4",
-      authDomain: "moya-moskva.firebaseapp.com",
-      projectId: "moya-moskva",
-      storageBucket: "moya-moskva.firebasestorage.app",
-      messagingSenderId: "397269931085",
-      appId: "1:397269931085:web:a5c54a888396794a25b804"
-    };
+    <textarea id="note" rows="4" placeholder="Заметка…"></textarea>
+    <input type="file" id="photo">
 
-    firebase.initializeApp(firebaseConfig);
-    window.db = firebase.firestore();
-  </script>
+    <button id="save">Сохранить</button>
+    <button id="reset">Сбросить всё</button>
 
- <script type="module" src="app.js"></script>
+    <hr>
+
+    <h3>Открыть карту</h3>
+    <input id="access-code" placeholder="Код доступа">
+    <button id="load-shared">Открыть</button>
+
+    <hr>
+
+    <button id="share">Поделиться</button>
+    <div id="share-result"></div>
+
+  </aside>
+
+  <main id="map-container">
+    <div id="map-viewport">
+      <object
+        id="metro-map"
+        type="image/svg+xml"
+        data="moya_moskva_base_map.svg">
+      </object>
+    </div>
+  </main>
+
+</div>
+
+<!-- FIREBASE COMPAT -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyC0x6YWKPKC7McI58rEgHxnS9OXSYPMuH4",
+    authDomain: "moya-moskva.firebaseapp.com",
+    projectId: "moya-moskva",
+    storageBucket: "moya-moskva.firebasestorage.app",
+    messagingSenderId: "397269931085",
+    appId: "1:397269931085:web:a5c54a888396794a25b804"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  window.db = firebase.firestore();
+</script>
+
+<script src="app.js"></script>
 
 </body>
 </html>
