@@ -74,34 +74,42 @@ mapObject.addEventListener("load", () => {
 // ==============================
 // SAVE
 // ==============================
-saveBtn.addEventListener("click", () => {
-  if (!currentStationId) return alert("Выберите станцию");
+saveBtn.addEventListener("click", async () => {
+  if (!currentStationId) {
+    alert("Выберите станцию");
+    return;
+  }
 
-  if (!data[currentStationId]) data[currentStationId] = {};
+  if (!data[currentStationId]) {
+    data[currentStationId] = {};
+  }
+
   data[currentStationId].note = noteInput.value;
 
   const file = fileInput.files[0];
 
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      data[currentStationId].photo = reader.result;
-      persist();
-    };
-    reader.readAsDataURL(file);
-  } else {
+  try {
+    if (file) {
+      const storage = window.storage;
+      const storageRef = storage.ref();
+      const fileRef = storageRef.child(
+        "photos/" + Date.now() + "_" + file.name
+      );
+
+      await fileRef.put(file);
+      const downloadURL = await fileRef.getDownloadURL();
+
+      data[currentStationId].photo = downloadURL;
+    }
+
     persist();
+    alert("Сохранено!");
+
+  } catch (err) {
+    console.error(err);
+    alert("Ошибка загрузки фото");
   }
 });
-
-function persist() {
-  localStorage.setItem("stations", JSON.stringify(data));
- if (mapObject.contentDocument) {
-  updateVisuals();
-} else {
-  mapObject.addEventListener("load", updateVisuals, { once: true });
-}
-}
 
 // ==============================
 // RESET
@@ -283,41 +291,3 @@ loadBtn.addEventListener("click", async () => {
     loadResult.textContent = "Неверный код";
   }
 });
-const storage = window.storage;
-
-const file = fileInput.files[0];
-
-if (file) {
-  const storageRef = storage.ref();
-  const fileRef = storageRef.child(
-    "photos/" + Date.now() + "_" + file.name
-  );
-
-  await fileRef.put(file);
-
-  const downloadURL = await fileRef.getDownloadURL();
-
-  data[currentStationId].photo = downloadURL;
-  persist();
-} else {
-  persist();
-}
-const storage = window.storage;
-
-const file = fileInput.files[0];
-
-if (file) {
-  const storageRef = storage.ref();
-  const fileRef = storageRef.child(
-    "photos/" + Date.now() + "_" + file.name
-  );
-
-  await fileRef.put(file);
-
-  const downloadURL = await fileRef.getDownloadURL();
-
-  data[currentStationId].photo = downloadURL;
-  persist();
-} else {
-  persist();
-}
