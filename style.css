@@ -1,144 +1,182 @@
+/* ===== RESET ===== */
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  margin: 0;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg, #e8edf3 0%, #dfe6ef 100%);
-  color: #111;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f5f7fa;
+  color: #1e1e1e;
+  line-height: 1.5;
 }
 
 /* ===== HEADER ===== */
-
-#topbar {
-  padding: 28px 40px;
+header {
+  padding: 40px 60px 20px;
 }
 
-#map-title {
+header h1 {
   font-size: 32px;
-  font-weight: 700;
-  margin: 0;
+  font-weight: 600;
+  margin-bottom: 10px;
 }
 
 .subtitle {
-  color: #6b7280;
-  margin-top: 6px;
+  color: #666;
+  margin-bottom: 20px;
+  max-width: 600px;
+}
+
+#map-name-input {
+  width: 100%;
+  max-width: 500px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  background: white;
 }
 
 /* ===== LAYOUT ===== */
-
 #app {
   display: grid;
-  grid-template-columns: 380px 1fr;
-  height: calc(100vh - 120px);
-  padding: 0 40px 40px;
-  gap: 24px;
+  grid-template-columns: 340px 1fr;
+  gap: 30px;
+  padding: 20px 60px 60px;
+  height: calc(100vh - 140px);
 }
 
-/* ===== SIDEBAR CARD ===== */
-
+/* ===== SIDEBAR ===== */
 #sidebar {
-  background: rgba(255,255,255,0.7);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
-  padding: 28px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
   overflow-y: auto;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.05);
 }
 
-#sidebar h2,
-#sidebar h3 {
-  margin-top: 24px;
-  margin-bottom: 12px;
+#sidebar h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
 }
 
-textarea,
-input[type="text"],
-input[type="password"] {
+#station-info {
+  margin-bottom: 15px;
+  color: #555;
+}
+
+textarea {
   width: 100%;
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  margin-top: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  resize: none;
+  margin-bottom: 12px;
   font-size: 14px;
 }
 
-textarea:focus,
-input:focus {
-  outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+input[type="file"] {
+  margin-bottom: 12px;
 }
 
 button {
   width: 100%;
-  margin-top: 12px;
   padding: 12px;
   border-radius: 12px;
   border: none;
-  font-weight: 500;
+  font-size: 14px;
   cursor: pointer;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
-  color: white;
   transition: 0.2s ease;
 }
 
-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(99,102,241,0.25);
+#save {
+  background: #111;
+  color: white;
+  margin-bottom: 10px;
+}
+
+#save:hover {
+  opacity: 0.9;
 }
 
 #reset {
-  background: #ef4444;
+  background: #f1f1f1;
 }
 
 #reset:hover {
-  box-shadow: 0 8px 20px rgba(239,68,68,0.3);
+  background: #e5e5e5;
 }
 
-/* ===== PHOTO ===== */
-
-#photo-preview {
-  margin-top: 14px;
-  border-radius: 16px;
-  max-height: 180px;
-  object-fit: cover;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+#share {
+  background: #111;
+  color: white;
+  margin-top: 10px;
 }
 
-/* ===== MAP AREA ===== */
+#share:hover {
+  opacity: 0.9;
+}
 
+#load-map {
+  margin-top: 10px;
+  background: #111;
+  color: white;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  margin-top: 10px;
+}
+
+/* ===== MAP ===== */
 #map-container {
   background: white;
-  border-radius: 24px;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.05);
   position: relative;
 }
 
 #map-viewport {
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  cursor: grab;
-  position: relative;
-}
-
-#map-viewport:active {
-  cursor: grabbing;
+  overflow: auto;
 }
 
 #metro-map {
-  width: 1400px;
-  transform-origin: center center;
-  transition: transform 0.1s ease;
+  width: 1200px;
+  height: auto;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== PHOTO ===== */
+#photo-preview {
+  width: 100%;
+  border-radius: 12px;
+  margin-top: 10px;
+}
 
-@media (max-width: 1000px) {
+/* ===== MOBILE ===== */
+@media (max-width: 900px) {
   #app {
     grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  #map-container {
+    height: 70vh;
+  }
+
+  header {
+    padding: 20px;
+  }
+
+  #app {
+    padding: 20px;
   }
 }
