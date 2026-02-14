@@ -160,3 +160,11 @@ document.getElementById("reset").addEventListener("click", () => {
   document.querySelector('input[type="file"]').value = "";
   alert("Сброшено");
 });
+document.querySelectorAll("#metro-map svg text").forEach(el => {
+  el.style.cursor = "pointer";
+
+  el.addEventListener("click", () => {
+    selectedStation = el.textContent.trim();
+    document.getElementById("station-info").innerText = selectedStation;
+  });
+});
