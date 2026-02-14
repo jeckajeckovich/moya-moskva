@@ -63,9 +63,10 @@ header h1 {
   overflow: hidden;
 }
 
-#metro-map {
-  width: 165%;
+#metro-map svg {
+  width: 150%;
   height: auto;
+}
 
   transform: translateX(-380px) translateY(-70px);
 }
