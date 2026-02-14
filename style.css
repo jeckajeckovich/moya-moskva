@@ -82,33 +82,35 @@ input[type="file"] {
 }
 
 button {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
   border: none;
-  font-size: 14px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-size: 15px;
   cursor: pointer;
   transition: 0.2s ease;
 }
 
-#save {
-  background: #111;
+#save,
+#share,
+#load-map {
+  background: #2e2e2e;
   color: white;
-  margin-bottom: 10px;
 }
 
-#save:hover {
-  opacity: 0.9;
+#save:hover,
+#share:hover,
+#load-map:hover {
+  background: #444;
 }
 
 #reset {
-  background: #f1f1f1;
+  background: #e5e5e5;
+  color: #222;
 }
 
 #reset:hover {
-  background: #e5e5e5;
+  background: #d8d8d8;
 }
-
 #share {
   background: #111;
   color: white;
@@ -136,11 +138,13 @@ input[type="password"] {
 
 /* ===== MAP ===== */
 #map-container {
-  background: white;
+  flex: 1;
+  background: #f2f3f5;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.05);
-  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #map-viewport {
