@@ -29,23 +29,32 @@ function initStations() {
 
   texts.forEach(el => {
     el.style.cursor = "pointer";
-
+if (mapData[el.textContent.trim()]) {
+  el.style.fontWeight = "bold";
+}
     el.addEventListener("click", () => {
       selectedStation = el.textContent.trim();
       document.getElementById("station-info").innerText = selectedStation;
 
+      const textarea = document.querySelector("textarea");
+      const container = document.getElementById("photo-container");
+
       if (mapData[selectedStation]) {
-        document.querySelector("textarea").value =
-          mapData[selectedStation].note || "";
+        textarea.value = mapData[selectedStation].note || "";
 
         if (mapData[selectedStation].photo) {
           showPhoto(mapData[selectedStation].photo);
+        } else {
+          container.style.display = "none";
         }
+
+      } else {
+        textarea.value = "";
+        container.style.display = "none";
       }
     });
   });
 }
-
 // ==========================
 // IMAGE COMPRESSION
 // ==========================
@@ -84,18 +93,11 @@ function compressImage(file) {
 // ==========================
 
 function showPhoto(base64) {
-  let img = document.getElementById("photo-preview");
-
-  if (!img) {
-    img = document.createElement("img");
-    img.id = "photo-preview";
-    img.style.maxWidth = "100%";
-    img.style.marginTop = "10px";
-    document.getElementById("sidebar").appendChild(img);
-  }
+  const container = document.getElementById("photo-container");
+  const img = document.getElementById("photo-preview");
 
   img.src = base64;
-  img.style.display = "block";
+  container.style.display = "block";
 }
 
 // ==========================
@@ -148,6 +150,10 @@ document.getElementById("share").addEventListener("click", async () => {
 // LOAD
 // ==========================
 
+// ==========================
+// LOAD
+// ==========================
+
 document.getElementById("load-map").addEventListener("click", async () => {
   const id = document.getElementById("map-code-input").value;
 
@@ -164,6 +170,10 @@ document.getElementById("load-map").addEventListener("click", async () => {
   }
 
   mapData = doc.data().data;
+
+  // Пересветим станции
+  initStations();
+
   alert("Карта загружена ✨");
 });
 
@@ -175,5 +185,8 @@ document.getElementById("reset").addEventListener("click", () => {
   mapData = {};
   document.querySelector("textarea").value = "";
   document.querySelector('input[type="file"]').value = "";
+
+  document.getElementById("photo-container").style.display = "none";
+
   alert("Сброшено");
 });
