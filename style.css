@@ -1,7 +1,4 @@
-/* ============================= */
-/* RESET */
-/* ============================= */
-
+/* ================== RESET ================== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -12,158 +9,94 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background: #f4f5f7;
   color: #1c1c1c;
-  line-height: 1.5;
 }
 
-/* ============================= */
-/* HERO */
-/* ============================= */
-
+/* ================== HERO ================== */
 .hero {
-  padding: 80px 40px 60px;
-  background: linear-gradient(180deg, #f4f5f7 0%, #ffffff 100%);
+  padding: 50px 60px 30px;
 }
 
 .hero-inner {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .hero h1 {
-  font-size: 40px;
+  font-size: 34px;
   font-weight: 600;
-  margin-bottom: 14px;
-  letter-spacing: -0.5px;
-}
-
-.hero-subtitle {
-  font-size: 18px;
-  color: #666;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .hero-description {
+  color: #6b6b6b;
   font-size: 15px;
-  color: #888;
-  max-width: 620px;
 }
 
-/* ============================= */
-/* START SCREEN */
-/* ============================= */
-
-#start-screen {
-  position: fixed;
-  inset: 0;
-  background: #f4f5f7;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.start-box {
-  background: white;
-  padding: 60px 70px;
-  border-radius: 24px;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.08);
-  text-align: center;
-  max-width: 480px;
-  width: 90%;
-}
-
-.start-box h1 {
-  font-size: 26px;
-  margin-bottom: 12px;
-}
-
-.start-box p {
-  color: #777;
-  margin-bottom: 30px;
-}
-
-.start-box button {
-  width: 100%;
-  margin-top: 12px;
-  padding: 14px;
-  border-radius: 14px;
-  font-size: 15px;
-  border: none;
-  background: #2b2b2b;
-  color: white;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.start-box button:hover {
-  background: #444;
-}
-
-/* ============================= */
-/* MAIN LAYOUT */
-/* ============================= */
-
+/* ================== LAYOUT ================== */
 #app {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 60px 60px;
   display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 30px;
-  padding: 40px 60px 60px;
-  height: 100vh;
+  grid-template-columns: 320px 1fr;
+  gap: 40px;
 }
 
-/* ============================= */
-/* SIDEBAR */
-/* ============================= */
-
+/* ================== SIDEBAR ================== */
 #sidebar {
-  background: white;
-  border-radius: 20px;
-  padding: 26px;
-  overflow-y: auto;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 18px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.05);
 }
 
 #sidebar h2 {
-  font-size: 20px;
+  font-size: 18px;
   margin-bottom: 10px;
 }
 
 #station-info {
-  margin-bottom: 15px;
-  color: #555;
-}
-
-textarea,
-input[type="text"],
-input[type="password"] {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #e5e5e5;
-  font-size: 14px;
+  color: #666;
   margin-bottom: 12px;
-  background: #fafafa;
+  font-size: 14px;
 }
 
 textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #e3e3e3;
+  margin-bottom: 12px;
+  font-size: 14px;
   resize: none;
 }
 
 input[type="file"] {
   margin-bottom: 14px;
+  font-size: 13px;
 }
 
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e3e3e3;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* ================== BUTTONS ================== */
 button {
   width: 100%;
-  padding: 14px;
-  border-radius: 14px;
+  padding: 10px 14px;
+  border-radius: 10px;
   border: none;
-  font-size: 15px;
+  font-size: 14px;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: 0.15s ease;
+  margin-top: 8px;
 }
-
-/* primary buttons */
 
 #save,
 #share,
@@ -178,100 +111,57 @@ button {
   background: #444;
 }
 
-/* secondary */
-
 #reset {
-  background: #e9e9e9;
-  color: #222;
-  margin-top: 10px;
+  background: #ededed;
+  color: #333;
 }
 
 #reset:hover {
-  background: #dcdcdc;
+  background: #e0e0e0;
 }
 
-/* ============================= */
-/* MAP */
-/* ============================= */
-
+/* ================== MAP ================== */
 #map-container {
-  background: white;
-  border-radius: 24px;
+  background: #ffffff;
+  border-radius: 22px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.05);
-  position: relative;
+  padding: 30px;
 }
 
 #map-viewport {
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  cursor: grab;
-}
-
-#map-viewport:active {
-  cursor: grabbing;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #metro-map {
   width: 100%;
-  height: 100%;
+  max-width: 1100px;
+  height: auto;
 }
 
-/* ============================= */
-/* PHOTO PREVIEW */
-/* ============================= */
-
+/* ================== PHOTO ================== */
 #photo-preview {
   width: 100%;
-  border-radius: 14px;
-  margin-top: 10px;
-  cursor: pointer;
+  border-radius: 12px;
+  margin-bottom: 12px;
 }
 
-/* ============================= */
-/* PHOTO MODAL */
-/* ============================= */
-
-#photo-modal {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.75);
-  z-index: 2000;
-}
-
-#photo-modal.hidden {
-  display: none;
-}
-
-#modal-img {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 18px;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
-}
-
-/* ============================= */
-/* MOBILE */
-/* ============================= */
-
+/* ================== MOBILE ================== */
 @media (max-width: 900px) {
-
   #app {
     grid-template-columns: 1fr;
     padding: 20px;
-    height: auto;
-  }
-
-  #map-container {
-    height: 70vh;
   }
 
   .hero {
-    padding: 40px 20px;
+    padding: 30px 20px;
   }
-
 }
