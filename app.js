@@ -1,8 +1,6 @@
 // ==========================
 // FIREBASE INIT
 // ==========================
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
 
 // ==========================
 // STATE
