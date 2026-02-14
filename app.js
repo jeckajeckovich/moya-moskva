@@ -1,13 +1,6 @@
 // ==========================
 // FIREBASE INIT
 // ==========================
-
-const firebaseConfig = {
-  apiKey: "ТВОЙ_API_KEY",
-  authDomain: "ТВОЙ_PROJECT.firebaseapp.com",
-  projectId: "ТВОЙ_PROJECT_ID",
-};
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
