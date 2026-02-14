@@ -64,10 +64,10 @@ header h1 {
 }
 
 #metro-map {
-  width: 155%;
+  width: 165%;
   height: auto;
 
-  transform: translateX(-300px) translateY(-70px);
+  transform: translateX(-380px) translateY(-70px);
 }
 
 /* ========================= */
