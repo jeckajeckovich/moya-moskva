@@ -360,3 +360,22 @@ photoPreview.addEventListener("click", () => {
 photoModal.addEventListener("click", () => {
   photoModal.classList.add("hidden");
 });
+const startScreen = document.getElementById("start-screen");
+const createModeBtn = document.getElementById("create-mode");
+const viewModeBtn = document.getElementById("view-mode");
+const app = document.getElementById("app");
+
+app.style.display = "none";
+
+createModeBtn.addEventListener("click", () => {
+  startScreen.style.display = "none";
+  app.style.display = "flex";
+});
+
+viewModeBtn.addEventListener("click", () => {
+  startScreen.style.display = "none";
+  app.style.display = "flex";
+
+  // можно сразу проскроллить к блоку ввода кода
+  mapCodeInput.focus();
+});
