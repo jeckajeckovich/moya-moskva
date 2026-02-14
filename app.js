@@ -1,381 +1,299 @@
-// ==============================
-// DB
-// ==============================
-const db = window.db;
-const storage = window.storage;
+document.addEventListener("DOMContentLoaded", () => {
 
-// ==============================
-// DOM
-// ==============================
-const mapObject = document.getElementById("metro-map");
-const info = document.getElementById("station-info");
-const noteInput = document.getElementById("note");
-const fileInput = document.getElementById("photo");
-const saveBtn = document.getElementById("save");
-const resetBtn = document.getElementById("reset");
-const shareBtn = document.getElementById("share");
-const shareResult = document.getElementById("share-result");
-const loadBtn = document.getElementById("load-map");
-const mapCodeInput = document.getElementById("map-code-input");
-const accessCodeInput = document.getElementById("access-code-input");
-const loadResult = document.getElementById("load-result");
-const mapTitle = document.getElementById("map-title");
-const mapNameInput = document.getElementById("map-name-input");
-const photoPreview = document.getElementById("photo-preview");
+  // ==============================
+  // DB
+  // ==============================
+  const db = window.db;
+  const storage = window.storage;
 
-// ==============================
-// STATE
-// ==============================
-let data = JSON.parse(localStorage.getItem("stations") || "{}");
-let currentStationId = null;
+  // ==============================
+  // DOM
+  // ==============================
+  const mapObject = document.getElementById("metro-map");
+  const viewport = document.getElementById("map-viewport");
+  const info = document.getElementById("station-info");
+  const noteInput = document.getElementById("note");
+  const fileInput = document.getElementById("photo");
+  const saveBtn = document.getElementById("save");
+  const resetBtn = document.getElementById("reset");
+  const shareBtn = document.getElementById("share");
+  const shareResult = document.getElementById("share-result");
+  const loadBtn = document.getElementById("load-map");
+  const mapCodeInput = document.getElementById("map-code-input");
+  const accessCodeInput = document.getElementById("access-code-input");
+  const loadResult = document.getElementById("load-result");
+  const photoPreview = document.getElementById("photo-preview");
 
-// ==============================
-// MAP TITLE
-// ==============================
-const savedMapName = localStorage.getItem("mapName");
-if (savedMapName) {
-  mapTitle.textContent = savedMapName;
-  mapNameInput.value = savedMapName;
-}
+  const startScreen = document.getElementById("start-screen");
+  const createModeBtn = document.getElementById("create-mode");
+  const viewModeBtn = document.getElementById("view-mode");
+  const app = document.getElementById("app");
 
-mapNameInput.addEventListener("input", () => {
-  localStorage.setItem("mapName", mapNameInput.value);
-  mapTitle.textContent = mapNameInput.value;
-});
+  const photoModal = document.getElementById("photo-modal");
+  const modalImg = document.getElementById("modal-img");
 
-// ==============================
-// LOAD SVG
-// ==============================
-mapObject.addEventListener("load", () => {
-  const svg = mapObject.contentDocument;
-  if (!svg) return;
+  // ==============================
+  // STATE
+  // ==============================
+  let data = JSON.parse(localStorage.getItem("stations") || "{}");
+  let currentStationId = null;
+  let scale = 1;
+  let isDragging = false;
+  let startX, startY;
+  let translateX = 0;
+  let translateY = 0;
 
-  const stations = svg.querySelectorAll("text");
+  if (app) app.style.display = "none";
 
-  stations.forEach((station, index) => {
-    const name = station.textContent.trim();
-    if (!name) return;
+  // ==============================
+  // START SCREEN
+  // ==============================
+  if (createModeBtn) {
+    createModeBtn.addEventListener("click", () => {
+      startScreen.style.display = "none";
+      app.style.display = "grid";
+    });
+  }
 
-    const id = "station-" + index;
-    station.dataset.id = id;
-    station.classList.add("station");
-    station.style.cursor = "pointer";
+  if (viewModeBtn) {
+    viewModeBtn.addEventListener("click", () => {
+      startScreen.style.display = "none";
+      app.style.display = "grid";
+      mapCodeInput.focus();
+    });
+  }
 
-    applyVisual(station);
+  // ==============================
+  // LOAD SVG
+  // ==============================
+  if (mapObject) {
+    mapObject.addEventListener("load", () => {
 
-    station.addEventListener("click", () => {
-      currentStationId = id;
-      info.textContent = name;
-      noteInput.value = data[id]?.note || "";
-      fileInput.value = "";
+      const svg = mapObject.contentDocument;
+      if (!svg) return;
 
-      if (data[id]?.photo) {
-        photoPreview.src = data[id].photo;
-        photoPreview.style.display = "block";
-      } else {
-        photoPreview.style.display = "none";
+      const stations = svg.querySelectorAll("text");
+
+      stations.forEach((station, index) => {
+        const name = station.textContent.trim();
+        if (!name) return;
+
+        const id = "station-" + index;
+        station.dataset.id = id;
+        station.classList.add("station");
+        station.style.cursor = "pointer";
+
+        applyVisual(station);
+
+        station.addEventListener("click", () => {
+          currentStationId = id;
+          info.textContent = name;
+          noteInput.value = data[id]?.note || "";
+          fileInput.value = "";
+
+          if (data[id]?.photo) {
+            photoPreview.src = data[id].photo;
+            photoPreview.style.display = "block";
+          } else {
+            photoPreview.style.display = "none";
+          }
+        });
+      });
+
+      enableZoomAndPan(svg.querySelector("svg"));
+    });
+  }
+
+  // ==============================
+  // SAVE
+  // ==============================
+  async function saveCurrentStation() {
+    if (!currentStationId) return;
+
+    if (!data[currentStationId]) data[currentStationId] = {};
+
+    data[currentStationId].note = noteInput.value;
+
+    try {
+      const file = fileInput.files[0];
+
+      if (file && storage) {
+        const fileRef = storage
+          .ref()
+          .child("photos/" + Date.now() + "_" + file.name);
+
+        await fileRef.put(file);
+        const downloadURL = await fileRef.getDownloadURL();
+        data[currentStationId].photo = downloadURL;
+        fileInput.value = "";
+      }
+
+      localStorage.setItem("stations", JSON.stringify(data));
+      updateVisuals();
+
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  if (saveBtn) saveBtn.addEventListener("click", saveCurrentStation);
+
+  if (noteInput) {
+    noteInput.addEventListener("input", () => {
+      if (!currentStationId) return;
+
+      if (!data[currentStationId]) data[currentStationId] = {};
+      data[currentStationId].note = noteInput.value;
+
+      localStorage.setItem("stations", JSON.stringify(data));
+      updateVisuals();
+    });
+  }
+
+  // ==============================
+  // RESET
+  // ==============================
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      if (!confirm("Сбросить всё?")) return;
+      localStorage.removeItem("stations");
+      data = {};
+      updateVisuals();
+      info.textContent = "Кликните на станцию";
+      noteInput.value = "";
+      photoPreview.style.display = "none";
+    });
+  }
+
+  // ==============================
+  // VISUAL
+  // ==============================
+  function applyVisual(station) {
+    const id = station.dataset.id;
+    const hasData = data[id]?.note || data[id]?.photo;
+    station.style.opacity = hasData ? "1" : "0.35";
+    station.style.fontWeight = hasData ? "700" : "400";
+  }
+
+  function updateVisuals() {
+    const svg = mapObject.contentDocument;
+    if (!svg) return;
+    svg.querySelectorAll("text.station").forEach(applyVisual);
+  }
+
+  // ==============================
+  // SHARE
+  // ==============================
+  if (shareBtn) {
+    shareBtn.addEventListener("click", async () => {
+      try {
+        const password = prompt("Придумайте приватный код:");
+        if (!password) return;
+
+        const payload = {
+          stations: data
+        };
+
+        const docRef = await db.collection("maps").add({
+          payload,
+          createdAt: Date.now()
+        });
+
+        shareResult.innerHTML = `
+          🧭 Код карты: <strong>${docRef.id}</strong><br>
+          🔐 Приватный код: <strong>${password}</strong>
+        `;
+
+      } catch (err) {
+        console.error(err);
+        alert("Ошибка записи");
       }
     });
-  });
-});
-
-// ==============================
-// SAVE
-// ==============================
-async function saveCurrentStation() {
-  if (!currentStationId) return;
-
-  if (!data[currentStationId]) {
-    data[currentStationId] = {};
   }
 
-  data[currentStationId].note = noteInput.value;
+  // ==============================
+  // LOAD
+  // ==============================
+  if (loadBtn) {
+    loadBtn.addEventListener("click", async () => {
+      const mapId = mapCodeInput.value.trim();
 
-  try {
-    const file = fileInput.files[0];
+      if (!mapId) {
+        loadResult.textContent = "Введите код карты";
+        return;
+      }
 
-    if (file) {
-      const storage = window.storage;
-      const fileRef = storage
-        .ref()
-        .child("photos/" + Date.now() + "_" + file.name);
+      try {
+        const snapshot = await db.collection("maps").doc(mapId).get();
 
-      await fileRef.put(file);
-      const downloadURL = await fileRef.getDownloadURL();
+        if (!snapshot.exists) {
+          loadResult.textContent = "Карта не найдена";
+          return;
+        }
 
-      data[currentStationId].photo = downloadURL;
-      fileInput.value = "";
-    }
+        data = snapshot.data().payload.stations || {};
+        localStorage.setItem("stations", JSON.stringify(data));
 
-    localStorage.setItem("stations", JSON.stringify(data));
-    updateVisuals();
+        updateVisuals();
+        loadResult.textContent = "Карта загружена!";
 
-  } catch (err) {
-    console.error(err);
+      } catch (e) {
+        console.error(e);
+        loadResult.textContent = "Ошибка загрузки";
+      }
+    });
   }
-}
-noteInput.addEventListener("input", () => {
-  if (!currentStationId) return;
 
-  if (!data[currentStationId]) {
-    data[currentStationId] = {};
-  }
+  // ==============================
+  // ZOOM + PAN
+  // ==============================
+  function enableZoomAndPan(svgElement) {
+    if (!svgElement || !viewport) return;
 
-  data[currentStationId].note = noteInput.value;
-  localStorage.setItem("stations", JSON.stringify(data));
-  updateVisuals();
-});
-saveBtn.addEventListener("click", saveCurrentStation);
-// ==============================
-// RESET
-// ==============================
-resetBtn.addEventListener("click", () => {
-  if (!confirm("Сбросить всё?")) return;
-  localStorage.removeItem("stations");
-  data = {};
-  updateVisuals();
-  info.textContent = "Кликните на станцию";
-  noteInput.value = "";
-  photoPreview.style.display = "none";
-});
-
-// ==============================
-// VISUAL
-// ==============================
-function applyVisual(station) {
-  const id = station.dataset.id;
-  const hasData = data[id]?.note || data[id]?.photo;
-  station.style.opacity = hasData ? "1" : "0.35";
-  station.style.fontWeight = hasData ? "700" : "400";
-}
-
-function updateVisuals() {
-  const svg = mapObject.contentDocument;
-  if (!svg) return;
-  svg.querySelectorAll("text.station").forEach(applyVisual);
-}
-
-// ==============================
-// ENCRYPT
-// ==============================
-async function encryptData(payload, password) {
-  const enc = new TextEncoder();
-
-  const keyMaterial = await crypto.subtle.importKey(
-    "raw",
-    enc.encode(password),
-    "PBKDF2",
-    false,
-    ["deriveKey"]
-  );
-
-  const salt = crypto.getRandomValues(new Uint8Array(16));
-
-  const key = await crypto.subtle.deriveKey(
-    { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
-    keyMaterial,
-    { name: "AES-GCM", length: 256 },
-    false,
-    ["encrypt"]
-  );
-
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-
-  const encrypted = await crypto.subtle.encrypt(
-    { name: "AES-GCM", iv },
-    key,
-    enc.encode(JSON.stringify(payload))
-  );
-
-  return {
-    encrypted: Array.from(new Uint8Array(encrypted)),
-    iv: Array.from(iv),
-    salt: Array.from(salt)
-  };
-}
-
-async function decryptData(payload, password) {
-  const enc = new TextEncoder();
-  const dec = new TextDecoder();
-
-  const keyMaterial = await crypto.subtle.importKey(
-    "raw",
-    enc.encode(password),
-    "PBKDF2",
-    false,
-    ["deriveKey"]
-  );
-
-  const key = await crypto.subtle.deriveKey(
-    {
-      name: "PBKDF2",
-      salt: new Uint8Array(payload.salt),
-      iterations: 100000,
-      hash: "SHA-256"
-    },
-    keyMaterial,
-    { name: "AES-GCM", length: 256 },
-    false,
-    ["decrypt"]
-  );
-
-  const decrypted = await crypto.subtle.decrypt(
-    { name: "AES-GCM", iv: new Uint8Array(payload.iv) },
-    key,
-    new Uint8Array(payload.encrypted)
-  );
-
-  return JSON.parse(dec.decode(decrypted));
-}
-
-// ==============================
-// SHARE
-// ==============================
-shareBtn.addEventListener("click", async () => {
-  try {
-    const password = prompt("Придумайте приватный код:");
-    if (!password) return;
-
-    const payload = {
-      mapName: localStorage.getItem("mapName") || "",
-      stations: data
-    };
-
-    const encryptedPayload = await encryptData(payload, password);
-
-    const docRef = await db.collection("maps").add({
-      payload: encryptedPayload,
-      createdAt: Date.now()
+    viewport.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      scale += e.deltaY * -0.001;
+      scale = Math.min(Math.max(0.5, scale), 3);
+      updateTransform(svgElement);
     });
 
-    shareResult.innerHTML = `
-      🧭 Код карты: <strong>${docRef.id}</strong><br>
-      🔐 Приватный код: <strong>${password}</strong>
-    `;
+    viewport.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      startX = e.clientX - translateX;
+      startY = e.clientY - translateY;
+    });
 
-  } catch (err) {
-    console.error(err);
-    alert("Ошибка записи в Firestore");
-  }
-});
+    viewport.addEventListener("mouseup", () => isDragging = false);
+    viewport.addEventListener("mouseleave", () => isDragging = false);
 
-// ==============================
-// LOAD
-// ==============================
-loadBtn.addEventListener("click", async () => {
-  const mapId = mapCodeInput.value.trim();
-  const password = accessCodeInput.value.trim();
-
-  if (!mapId || !password) {
-    loadResult.textContent = "Введите код карты и приватный код";
-    return;
+    viewport.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      translateX = e.clientX - startX;
+      translateY = e.clientY - startY;
+      updateTransform(svgElement);
+    });
   }
 
-  try {
-    const snapshot = await db.collection("maps").doc(mapId).get();
-
-    if (!snapshot.exists) {
-      loadResult.textContent = "Карта не найдена";
-      return;
-    }
-
-    const decrypted = await decryptData(
-      snapshot.data().payload,
-      password
-    );
-
-    data = decrypted.stations || {};
-    localStorage.setItem("stations", JSON.stringify(data));
-
-    if (decrypted.mapName) {
-      localStorage.setItem("mapName", decrypted.mapName);
-      mapTitle.textContent = decrypted.mapName;
-      mapNameInput.value = decrypted.mapName;
-    }
-
-    if (mapObject.contentDocument) {
-      updateVisuals();
-    } else {
-      mapObject.addEventListener("load", updateVisuals, { once: true });
-    }
-
-    loadResult.textContent = "Карта загружена!";
-
-  } catch (e) {
-    console.error(e);
-    loadResult.textContent = "Неверный код";
+  function updateTransform(svgElement) {
+    svgElement.style.transform =
+      `translate(${translateX}px, ${translateY}px) scale(${scale})`;
   }
-});
-// ==============================
-// PREMIUM MAP INTERACTION
-// ==============================
 
-let scale = 1;
-let isDragging = false;
-let startX, startY;
-let translateX = 0;
-let translateY = 0;
+  // ==============================
+  // PHOTO MODAL
+  // ==============================
+  if (photoPreview) {
+    photoPreview.addEventListener("click", () => {
+      if (!photoPreview.src) return;
+      modalImg.src = photoPreview.src;
+      photoModal.classList.remove("hidden");
+    });
+  }
 
-const svgElement = document.getElementById("metro-map");
+  if (photoModal) {
+    photoModal.addEventListener("click", () => {
+      photoModal.classList.add("hidden");
+    });
+  }
 
-viewport.addEventListener("wheel", (e) => {
-  e.preventDefault();
-  scale += e.deltaY * -0.001;
-  scale = Math.min(Math.max(0.5, scale), 3);
-  updateTransform();
-});
-
-viewport.addEventListener("mousedown", (e) => {
-  isDragging = true;
-  startX = e.clientX - translateX;
-  startY = e.clientY - translateY;
-});
-
-viewport.addEventListener("mouseup", () => {
-  isDragging = false;
-});
-
-viewport.addEventListener("mouseleave", () => {
-  isDragging = false;
-});
-
-viewport.addEventListener("mousemove", (e) => {
-  if (!isDragging) return;
-  translateX = e.clientX - startX;
-  translateY = e.clientY - startY;
-  updateTransform();
-});
-
-function updateTransform() {
-  svgElement.style.transform =
-    `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-}
-const photoModal = document.getElementById("photo-modal");
-const modalImg = document.getElementById("modal-img");
-photoPreview.addEventListener("click", () => {
-  if (!photoPreview.src) return;
-  modalImg.src = photoPreview.src;
-  photoModal.classList.remove("hidden");
-});
-photoModal.addEventListener("click", () => {
-  photoModal.classList.add("hidden");
-});
-const startScreen = document.getElementById("start-screen");
-const createModeBtn = document.getElementById("create-mode");
-const viewModeBtn = document.getElementById("view-mode");
-const app = document.getElementById("app");
-
-app.style.display = "none";
-
-createModeBtn.addEventListener("click", () => {
-  startScreen.style.display = "none";
-  app.style.display = "flex";
-});
-
-viewModeBtn.addEventListener("click", () => {
-  startScreen.style.display = "none";
-  app.style.display = "flex";
-
-  // можно сразу проскроллить к блоку ввода кода
-  mapCodeInput.focus();
 });
