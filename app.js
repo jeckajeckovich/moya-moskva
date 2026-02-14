@@ -6,9 +6,6 @@ const firebaseConfig = {
   apiKey: "ТВОЙ_API_KEY",
   authDomain: "ТВОЙ_PROJECT.firebaseapp.com",
   projectId: "ТВОЙ_PROJECT_ID",
-  storageBucket: "ТВОЙ_PROJECT.appspot.com",
-  messagingSenderId: "XXX",
-  appId: "XXX"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -21,14 +18,36 @@ const db = firebase.firestore();
 let selectedStation = null;
 let mapData = {};
 
+const stationInfo = document.getElementById("station-info");
+const noteInput = document.querySelector("textarea");
+const fileInput = document.querySelector('input[type="file"]');
+
 // ==========================
-// STATION CLICK
+// SVG LOAD + CLICK STATIONS
 // ==========================
 
-document.querySelectorAll(".station").forEach(station => {
-  station.addEventListener("click", () => {
-    selectedStation = station.dataset.name;
-    document.getElementById("station-info").innerText = selectedStation;
+const mapObject = document.getElementById("metro-map");
+
+mapObject.addEventListener("load", () => {
+  const svg = mapObject.contentDocument;
+  if (!svg) return;
+
+  const stations = svg.querySelectorAll("text");
+
+  stations.forEach(el => {
+    el.style.cursor = "pointer";
+
+    el.addEventListener("click", () => {
+      const name = el.textContent.trim();
+      selectedStation = name;
+      stationInfo.innerText = name;
+
+      if (mapData[name]) {
+        noteInput.value = mapData[name].note || "";
+      } else {
+        noteInput.value = "";
+      }
+    });
   });
 });
 
@@ -37,7 +56,7 @@ document.querySelectorAll(".station").forEach(station => {
 // ==========================
 
 function compressImage(file) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const reader = new FileReader();
 
     reader.onload = function (event) {
@@ -76,8 +95,7 @@ document.getElementById("save").addEventListener("click", async () => {
     return;
   }
 
-  const note = document.querySelector("textarea").value;
-  const fileInput = document.querySelector('input[type="file"]');
+  const note = noteInput.value;
   let photo = null;
 
   if (fileInput.files[0]) {
@@ -136,14 +154,24 @@ document.getElementById("load-map").addEventListener("click", async () => {
 });
 
 // ==========================
-// RENDER DATA
+// RENDER LOADED DATA
 // ==========================
 
 function renderLoadedData() {
-  Object.keys(mapData).forEach(station => {
-    const el = document.querySelector(`[data-name="${station}"]`);
-    if (el) {
+  const svg = mapObject.contentDocument;
+  if (!svg) return;
+
+  const stations = svg.querySelectorAll("text");
+
+  stations.forEach(el => {
+    const name = el.textContent.trim();
+
+    if (mapData[name]) {
       el.style.opacity = "1";
+      el.style.fontWeight = "700";
+    } else {
+      el.style.opacity = "0.4";
+      el.style.fontWeight = "400";
     }
   });
 
@@ -156,15 +184,8 @@ function renderLoadedData() {
 
 document.getElementById("reset").addEventListener("click", () => {
   mapData = {};
-  document.querySelector("textarea").value = "";
-  document.querySelector('input[type="file"]').value = "";
+  noteInput.value = "";
+  fileInput.value = "";
+  stationInfo.innerText = "Кликните на станцию";
   alert("Сброшено");
-});
-document.querySelectorAll("#metro-map svg text").forEach(el => {
-  el.style.cursor = "pointer";
-
-  el.addEventListener("click", () => {
-    selectedStation = el.textContent.trim();
-    document.getElementById("station-info").innerText = selectedStation;
-  });
 });
