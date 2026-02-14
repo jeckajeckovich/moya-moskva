@@ -303,3 +303,47 @@ loadBtn.addEventListener("click", async () => {
     loadResult.textContent = "Неверный код";
   }
 });
+// ==============================
+// PREMIUM MAP INTERACTION
+// ==============================
+
+let scale = 1;
+let isDragging = false;
+let startX, startY;
+let translateX = 0;
+let translateY = 0;
+
+const svgElement = document.getElementById("metro-map");
+
+viewport.addEventListener("wheel", (e) => {
+  e.preventDefault();
+  scale += e.deltaY * -0.001;
+  scale = Math.min(Math.max(0.5, scale), 3);
+  updateTransform();
+});
+
+viewport.addEventListener("mousedown", (e) => {
+  isDragging = true;
+  startX = e.clientX - translateX;
+  startY = e.clientY - translateY;
+});
+
+viewport.addEventListener("mouseup", () => {
+  isDragging = false;
+});
+
+viewport.addEventListener("mouseleave", () => {
+  isDragging = false;
+});
+
+viewport.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+  translateX = e.clientX - startX;
+  translateY = e.clientY - startY;
+  updateTransform();
+});
+
+function updateTransform() {
+  svgElement.style.transform =
+    `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+}
