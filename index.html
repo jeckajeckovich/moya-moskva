@@ -6,13 +6,16 @@
   <title>Следующая станция</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
+<body>
+
+<!-- МОДАЛКА -->
 <div id="photo-modal" class="hidden">
   <div class="modal-overlay"></div>
   <img id="modal-img">
 </div>
-<body>
 
-<header id="topbar">
+<!-- HERO -->
 <header class="hero">
   <div class="hero-inner">
     <h1>Наша Москва 2025</h1>
@@ -25,6 +28,8 @@
     </p>
   </div>
 </header>
+
+<!-- СТАРТ ЭКРАН -->
 <div id="start-screen">
   <div class="start-box">
     <h1>Следующая станция</h1>
@@ -34,19 +39,16 @@
     <button id="view-mode">Открыть по коду</button>
   </div>
 </div>
-<div id="app">
 
+<!-- ОСНОВНОЕ ПРИЛОЖЕНИЕ -->
+<div id="app">
   <aside id="sidebar">
     <h2>Станция</h2>
     <div id="station-info">Кликните на станцию</div>
 
     <textarea id="note" rows="4" placeholder="Заметка…"></textarea>
 
-    <!-- Фото превью -->
-    <img
-      id="photo-preview"
-      style="display:none; max-width:100%; margin-top:10px; border-radius:8px;"
-    />
+    <img id="photo-preview" style="display:none;" />
 
     <input type="file" id="photo" accept="image/*">
 
@@ -63,21 +65,11 @@
 
     <h3>Открыть карту по коду</h3>
 
-    <input
-      id="map-code-input"
-      type="text"
-      placeholder="Код карты"
-    />
-
-    <input
-      id="access-code-input"
-      type="password"
-      placeholder="Приватный код"
-    />
+    <input id="map-code-input" type="text" placeholder="Код карты" />
+    <input id="access-code-input" type="password" placeholder="Приватный код" />
 
     <button id="load-map">Открыть</button>
     <div id="load-result"></div>
-
   </aside>
 
   <main id="map-container">
@@ -89,34 +81,4 @@
       </object>
     </div>
   </main>
-
 </div>
-
-<!-- ========================= -->
-<!-- FIREBASE (compat версия) -->
-<!-- ========================= -->
-
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyC0x6YWKPKC7McI58rEgHxnS9OXSYPMuH4",
-    authDomain: "moya-moskva.firebaseapp.com",
-    projectId: "moya-moskva",
-    storageBucket: "moya-moskva.appspot.com", // ← ИСПРАВЛЕНО
-    messagingSenderId: "397269931085",
-    appId: "1:397269931085:web:a5c54a888396794a25b804"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-
-  window.db = firebase.firestore();
-  window.storage = firebase.storage();
-</script>
-
-<script src="app.js"></script>
-
-</body>
-</html>
