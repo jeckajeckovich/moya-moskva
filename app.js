@@ -1,34 +1,44 @@
 let selectedStation = null;
 let mapData = {};
 
+const mapObject = document.getElementById("metro-map");
 const stationInfo = document.getElementById("station-info");
 const noteInput = document.querySelector("textarea");
-const fileInput = document.querySelector('input[type="file"]');
 
-// ==========================
-// STATION CLICK
-// ==========================
+// ======================
+// Ждём загрузку SVG
+// ======================
 
-document.querySelectorAll("#map-viewport text").forEach(el => {
-  el.style.cursor = "pointer";
+mapObject.addEventListener("load", () => {
 
-  el.addEventListener("click", () => {
-    selectedStation = el.textContent.trim();
-    stationInfo.innerText = selectedStation;
+  const svgDoc = mapObject.contentDocument;
+  if (!svgDoc) return;
 
-    if (mapData[selectedStation]) {
-      noteInput.value = mapData[selectedStation].note || "";
-    } else {
-      noteInput.value = "";
-    }
+  const stations = svgDoc.querySelectorAll("text");
+
+  stations.forEach(el => {
+    el.style.cursor = "pointer";
+
+    el.addEventListener("click", () => {
+      selectedStation = el.textContent.trim();
+      stationInfo.innerText = selectedStation;
+
+      if (mapData[selectedStation]) {
+        noteInput.value = mapData[selectedStation].note || "";
+      } else {
+        noteInput.value = "";
+      }
+    });
   });
+
 });
 
-// ==========================
+// ======================
 // SAVE
-// ==========================
+// ======================
 
 document.getElementById("save").addEventListener("click", () => {
+
   if (!selectedStation) {
     alert("Выберите станцию");
     return;
@@ -41,25 +51,28 @@ document.getElementById("save").addEventListener("click", () => {
   alert("Сохранено ❤️");
 });
 
-// ==========================
-// SHARE (без firebase пока)
-// ==========================
+// ======================
+// SHARE (без Firebase)
+// ======================
 
 document.getElementById("share").addEventListener("click", () => {
+
   if (Object.keys(mapData).length === 0) {
     alert("Нет данных");
     return;
   }
 
-  const code = btoa(JSON.stringify(mapData));
+  const code = btoa(unescape(encodeURIComponent(JSON.stringify(mapData))));
   prompt("Отправь ей этот код ❤️", code);
+
 });
 
-// ==========================
+// ======================
 // LOAD
-// ==========================
+// ======================
 
 document.getElementById("load-map").addEventListener("click", () => {
+
   const input = document.querySelector('input[type="text"]').value;
 
   if (!input) {
@@ -68,28 +81,10 @@ document.getElementById("load-map").addEventListener("click", () => {
   }
 
   try {
-    mapData = JSON.parse(atob(input));
-    renderLoadedData();
+    mapData = JSON.parse(decodeURIComponent(escape(atob(input))));
     alert("Карта загружена ✨");
   } catch {
     alert("Неверный код");
   }
+
 });
-
-// ==========================
-// RENDER
-// ==========================
-
-function renderLoadedData() {
-  document.querySelectorAll("#map-viewport text").forEach(el => {
-    const name = el.textContent.trim();
-
-    if (mapData[name]) {
-      el.style.opacity = "1";
-      el.style.fontWeight = "700";
-    } else {
-      el.style.opacity = "0.3";
-      el.style.fontWeight = "400";
-    }
-  });
-}
