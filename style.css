@@ -210,3 +210,30 @@ input[type="password"] {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
 }
+#start-screen {
+  position: fixed;
+  inset: 0;
+  background: #f5f6f7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.start-box {
+  text-align: center;
+  background: white;
+  padding: 60px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+}
+
+.start-box h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.start-box p {
+  color: #777;
+  margin-bottom: 30px;
+}
