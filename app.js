@@ -82,11 +82,8 @@ mapObject.addEventListener("load", () => {
 // ==============================
 // SAVE
 // ==============================
-saveBtn.addEventListener("click", async () => {
-  if (!currentStationId) {
-    alert("Выберите станцию");
-    return;
-  }
+async function saveCurrentStation() {
+  if (!currentStationId) return;
 
   if (!data[currentStationId]) {
     data[currentStationId] = {};
@@ -98,31 +95,37 @@ saveBtn.addEventListener("click", async () => {
     const file = fileInput.files[0];
 
     if (file) {
+      const storage = window.storage;
       const fileRef = storage
         .ref()
         .child("photos/" + Date.now() + "_" + file.name);
 
       await fileRef.put(file);
       const downloadURL = await fileRef.getDownloadURL();
+
       data[currentStationId].photo = downloadURL;
+      fileInput.value = "";
     }
 
     localStorage.setItem("stations", JSON.stringify(data));
     updateVisuals();
 
-    if (data[currentStationId].photo) {
-      photoPreview.src = data[currentStationId].photo;
-      photoPreview.style.display = "block";
-    }
-
-    alert("Сохранено!");
-
   } catch (err) {
     console.error(err);
-    alert("Ошибка загрузки фото");
   }
-});
+}
+noteInput.addEventListener("input", () => {
+  if (!currentStationId) return;
 
+  if (!data[currentStationId]) {
+    data[currentStationId] = {};
+  }
+
+  data[currentStationId].note = noteInput.value;
+  localStorage.setItem("stations", JSON.stringify(data));
+  updateVisuals();
+});
+saveBtn.addEventListener("click", saveCurrentStation);
 // ==============================
 // RESET
 // ==============================
@@ -347,3 +350,13 @@ function updateTransform() {
   svgElement.style.transform =
     `translate(${translateX}px, ${translateY}px) scale(${scale})`;
 }
+const photoModal = document.getElementById("photo-modal");
+const modalImg = document.getElementById("modal-img");
+photoPreview.addEventListener("click", () => {
+  if (!photoPreview.src) return;
+  modalImg.src = photoPreview.src;
+  photoModal.classList.remove("hidden");
+});
+photoModal.addEventListener("click", () => {
+  photoModal.classList.add("hidden");
+});
